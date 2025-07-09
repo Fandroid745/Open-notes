@@ -1,34 +1,47 @@
 package com.opennotes.ui.theme
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Shapes
-import androidx.compose.material.Typography
-import androidx.compose.material.darkColors
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// Define your color palette
-private val DarkColorPalette = darkColors(
+
+// AMOLED Color Scheme
+private val AmoledColorScheme = darkColorScheme(
     primary = Color.White,
-    background = DarkGray,
+    background = PureBlack,
     onBackground = Color.White,
-    surface = LightBlue,
-    onSurface = DarkGray
+    surface = PureBlack,
+    onSurface = Color.White
 )
 
-// Optional: define your own Typography and Shapes if not using defaults
-private val AppTypography = Typography()
+// Light theme
+private val LightColorScheme = lightColorScheme(
+    primary = DarkGray,
+    background = Color.White,
+    onBackground = DarkGray,
+    surface = Color.LightGray,
+    onSurface = Color.Black
+)
+
+private val AppTypography = Apptypography
 private val AppShapes = Shapes()
 
 @Composable
 fun OpenNotesTheme(
-    darkTheme: Boolean = true,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    // Use AMOLED for dark mode instead of DarkGray
+    val colorScheme = if (darkTheme) AmoledColorScheme else LightColorScheme
+
     MaterialTheme(
-        colors = DarkColorPalette,
-        typography = AppTypography, // ✅ Correct usage
-        shapes = AppShapes,         // ✅ Correct usage
+        colorScheme = colorScheme,
+        typography = AppTypography,
+        shapes = AppShapes,
         content = content
     )
 }
