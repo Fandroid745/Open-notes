@@ -54,29 +54,46 @@ fun NotesScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 16.dp)
                 ) {
                     Text(
-                        text = "Your note",
-                        style = MaterialTheme.typography.headlineLarge
+                        text = "Your notes",
+                        style = MaterialTheme.typography.headlineLarge,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                     )
 
-                    IconButton(
-                        onClick = {
-                            viewModel.onEvent(NotesEvent.ToggleOrderSection)
-                        }
+                    OutlinedTextField(
+                        value = state.searchQuery,
+                        onValueChange = {
+                            viewModel.onEvent(NotesEvent.SearchNote(it))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        placeholder = { Text("Search notes") },
+                        singleLine = true
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Sort,
-                            contentDescription = "Sort"
-                        )
+                        IconButton(
+                            onClick = {
+                                viewModel.onEvent(NotesEvent.ToggleOrderSection)
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Sort,
+                                contentDescription = "Sort"
+                            )
+                        }
                     }
                 }
+
 
                 AnimatedVisibility(
                     visible = state.isOrderSectionVisible,

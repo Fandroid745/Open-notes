@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.opennotes.feature_node.domain.model.Note
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
+import com.opennotes.feature_node.domain.use_case.SearchNotesUseCase
 import com.opennotes.feature_node.domain.util.NoteOrder
 import com.opennotes.feature_node.domain.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,13 +22,14 @@ class NotesViewModel @Inject constructor
 (
         private val noteUseCases: NoteUseCases
 
-): ViewModel(){
-        private val _state=mutableStateOf(NotesState())
-        val state: State<NotesState> = _state
-        private var recentlyDeletedNote: Note?=null
-        private var getNotesJob: Job?=null
 
-        init{
+): ViewModel() {
+        private val _state = mutableStateOf(NotesState())
+        val state: State<NotesState> = _state
+        private var recentlyDeletedNote: Note? = null
+        private var getNotesJob: Job? = null
+
+        init {
                 getNotes(NoteOrder.Date(OrderType.Descending))
         }
 
@@ -44,7 +46,7 @@ class NotesViewModel @Inject constructor
                         is NotesEvent.DeleteNote -> {
                                 viewModelScope.launch {
                                         noteUseCases.deleteNote(event.note)
-                                        recentlyDeletedNote=event.note
+                                        recentlyDeletedNote = event.note
 
                                 }
 
@@ -64,22 +66,36 @@ class NotesViewModel @Inject constructor
 
                         }
 
+                        is NotesEvent.SearchNote -> {
+                                _state.value=state.value.copy(searchQuery=event.query)
+                                searchNotes(event.query)
+                        }
+
                         else -> {}
                 }
         }
 
-                private fun getNotes(noteOrder: NoteOrder){
-                        getNotesJob?.cancel()
-                        getNotesJob= noteUseCases.getNotes(noteOrder)
-                                .onEach{ notes->
-                                        _state.value=state.value.copy(
-                                                notes=notes,
-                                                noteOrder=noteOrder
-                                        )
-                }
-                                .launchIn(viewModelScope)
+        private fun getNotes(noteOrder: NoteOrder) {
+                getNotesJob?.cancel()
+                getNotesJob = noteUseCases.getNotes(noteOrder)
+                        .onEach { notes ->
+                                _state.value = state.value.copy(
+                                        notes = notes,
+                                        noteOrder = noteOrder
+                                )
+                        }
+                        .launchIn(viewModelScope)
 
 
         }
-}
 
+
+        private fun searchNotes(query: String) {
+                getNotesJob?.cancel()
+                getNotesJob = noteUseCases.searchNotes(query) // ✅ use the injected use case
+                        .onEach { notes ->
+                                _state.value = state.value.copy(notes = notes)
+                        }
+                        .launchIn(viewModelScope)
+        }
+}

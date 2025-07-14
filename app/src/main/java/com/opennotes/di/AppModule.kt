@@ -10,6 +10,8 @@ import com.opennotes.feature_node.domain.use_case.DeleteNote
 import com.opennotes.feature_node.domain.use_case.GetNote
 import com.opennotes.feature_node.domain.use_case.GetNotes
 import com.opennotes.feature_node.domain.use_case.NoteUseCases
+import com.opennotes.feature_node.domain.use_case.SearchNotesUseCase
+import com.opennotes.feature_node.presentation.notes.NotesEvent
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,7 +47,8 @@ object AppModule {
             getNotes= GetNotes(repository),
             deleteNote= DeleteNote(repository),
             addNote = AddNote(repository),
-            getNote = GetNote(repository)
+            getNote = GetNote(repository),
+            searchNotes= SearchNotesUseCase(repository)
         )
     }
 

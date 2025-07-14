@@ -62,7 +62,8 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended"
     implementation "androidx.compose.ui:ui-tooling-preview"
     debugImplementation "androidx.compose.ui:ui-tooling"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.6.1"
+
 
     implementation "androidx.activity:activity-compose:1.8.2"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
@@ -73,8 +74,7 @@ dependencies {
     // Material 3 (only Android, no desktop variant)
     implementation "androidx.compose.material3:material3"
 
-    // Ads SDK (now works with AGP 8.2 and minSdk 24)
-    implementation 'com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:0.17.0-alpha02'
+
 
     // Core Android
     implementation 'androidx.core:core-ktx:1.13.1'

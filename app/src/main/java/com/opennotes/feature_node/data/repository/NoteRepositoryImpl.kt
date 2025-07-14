@@ -26,4 +26,9 @@ private val dao: NoteDao
     override suspend fun deleteNote(note: Note) {
      dao.deleteNote(note)
     }
+
+    override fun searchNotes(query: String): Flow<List<Note>> {
+        return dao.searchNotes(query)
+    }
+
 }
