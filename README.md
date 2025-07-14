@@ -1,57 +1,71 @@
+# 📝 OpenNotes
 
-
----
-
-# 📝 Notes App
-
-A modern, lightweight Notes application built using **Jetpack Compose** and following **MVVM + Clean Architecture** principles. Designed to be scalable, maintainable, and fully reactive.
+**OpenNotes** is a modern, lightweight, and privacy-respecting note-taking app built with **Jetpack Compose**, following the **MVVM** and **Clean Architecture** principles. The app is 100% offline and open source.
 
 ---
 
 ## 🚀 Tech Stack
 
-### 🎯 Architecture
+### 🧱 Architecture
 
-* **MVVM (Model - View - ViewModel)**
-  Separates UI (View), business logic (ViewModel), and data (Model) for cleaner, testable code.
+- **MVVM (Model-View-ViewModel):** Separates UI, business logic, and data for clean and testable code.
+- **Clean Architecture:** Layered design (UI → Domain → Data) for modular and maintainable development.
 
-* **Clean Architecture**
-  Further decouples the code into layers (UI, Domain, Data), promoting scalability and easier testing.
+### 🛠 Core Technologies
 
----
-
-### 🛠️ Core Technologies
-
-* **Kotlin**
-  A modern, concise, and safe programming language for Android development.
-
-* **Jetpack Compose**
-  Declarative UI toolkit from Google. Simplifies UI development and minimizes memory leaks and crashes.
-
-* **Room**
-  Persistence library for local data storage using SQLite with Kotlin support.
-
-* **Navigation Component**
-  Manages app navigation with ease, including passing data between screens and back stack handling.
-
-* **Dagger Hilt**
-  Simplifies dependency injection with lifecycle-aware components.
-
-* **Kotlin Coroutines**
-  Asynchronous programming simplified — for background operations like DB access or I/O.
-
-* **Kotlin Flow**
-  A reactive stream to observe data changes and emit results from the domain/data layers.
+| Technology            | Purpose                                                  |
+|-----------------------|-----------------------------------------------------------|
+| **Kotlin**            | Modern Android development language                       |
+| **Jetpack Compose**   | Declarative UI toolkit for building modern UIs            |
+| **Room**              | Local database solution using SQLite                      |
+| **Hilt (Dagger)**     | Dependency injection made easy and lifecycle-aware        |
+| **Kotlin Coroutines** | Simplifies background processing                          |
+| **Kotlin Flow**       | Reactive programming for UI and data streams              |
+| **Navigation**        | Type-safe and stateful navigation between screens         |
 
 ---
 
-## 💡 Features
+## ✨ Features
 
-* Create, edit, and delete notes
-* Store notes locally using Room
-* Smooth navigation using Navigation Component
-* Fully reactive UI with Flow and Compose
-* Clean Architecture for separation of concerns
-* Dependency Injection with Hilt
+- ✅ Create, edit, and delete notes
+- 🔍 Search functionality (by title and content)
+- 🌙 AMOLED pure black theme and Material You support
+- 🔐 100% offline — no cloud, no tracking
+- 🚫 No ads, no analytics
+- 💉 Built with scalable Clean Architecture and DI
+
+---
+
+## 📦 Installation
+
+You can:
+
+- Download the `.apk` from [Releases](https://github.com/Fandroid745/Open-notes/releases)
 
 
+---
+
+## 🛡️ License
+
+```text
+MIT License
+
+Copyright (c) 2025 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights 
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+copies of the Software, and to permit persons to whom the Software is 
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be 
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, 
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+DEALINGS IN THE SOFTWARE.
