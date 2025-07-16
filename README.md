@@ -1,6 +1,6 @@
 # 📝 OpenNotes
 
-**OpenNotes** is a modern, lightweight, and privacy-respecting note-taking app built with **Jetpack Compose**, following the **MVVM** and **Clean Architecture** principles. The app is 100% offline and open source.
+**OpenNotes** is a modern, lightweight, and privacy-respecting note-taking app built with **Jetpack Compose**, following **MVVM** and **Clean Architecture** principles. The app is 100% offline and open source.
 
 ---
 
@@ -8,64 +8,57 @@
 
 ### 🧱 Architecture
 
-- **MVVM (Model-View-ViewModel):** Separates UI, business logic, and data for clean and testable code.
-- **Clean Architecture:** Layered design (UI → Domain → Data) for modular and maintainable development.
+- **MVVM (Model-View-ViewModel):** Clean separation between UI, business logic, and data layers.
+- **Clean Architecture:** Modular layer-based design — UI → Domain → Data.
 
 ### 🛠 Core Technologies
 
-| Technology            | Purpose                                                  |
-|-----------------------|-----------------------------------------------------------|
-| **Kotlin**            | Modern Android development language                       |
-| **Jetpack Compose**   | Declarative UI toolkit for building modern UIs            |
-| **Room**              | Local database solution using SQLite                      |
-| **Hilt (Dagger)**     | Dependency injection made easy and lifecycle-aware        |
-| **Kotlin Coroutines** | Simplifies background processing                          |
-| **Kotlin Flow**       | Reactive programming for UI and data streams              |
-| **Navigation**        | Type-safe and stateful navigation between screens         |
+| Technology            | Purpose                                                   |
+|-----------------------|------------------------------------------------------------|
+| **Kotlin**            | Modern Android development language                        |
+| **Jetpack Compose**   | Declarative UI toolkit for building modern UIs             |
+| **Room**              | Local database abstraction over SQLite                     |
+| **Hilt (Dagger)**     | Dependency injection for modular and testable code         |
+| **Kotlin Coroutines** | Asynchronous and background task handling                  |
+| **Kotlin Flow**       | Reactive stream handling between data and UI               |
+| **Navigation**        | Type-safe, stateful screen transitions                     |
 
 ---
 
 ## ✨ Features
 
-- ✅ Create, edit, and delete notes
-- 🔍 Search functionality (by title and content)
-- 🌙 AMOLED pure black theme and Material You support
-- 🔐 100% offline — no cloud, no tracking
-- 🚫 No ads, no analytics
-- 💉 Built with scalable Clean Architecture and DI
+- ✅ Create, edit, and delete notes  
+- 🔍 Search notes by title and content  
+- 🌙 AMOLED dark theme & Material You dynamic theming  
+- 🔐 Fully offline — no cloud, no tracking  
+- 🚫 No ads, no analytics  
+- 💉 Built using scalable Clean Architecture & Dependency Injection  
 
 ---
 
 ## 📦 Installation
 
-You can:
-
-- Download the `.apk` from [Releases](https://github.com/Fandroid745/Open-notes/releases)
-
+- 📥 Download the latest `.apk` from the [Releases](https://github.com/Fandroid745/Open-notes/releases) page.
 
 ---
 
 ## 🛡️ License
 
+This project is licensed under the terms of the **GNU General Public License v3.0**.
+
 ```text
-MIT License
+OpenNotes - A note-taking app  
+Copyright (C) 2025 Open Notes
 
-Copyright (c) 2025 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the “Software”), to deal
-in the Software without restriction, including without limitation the rights 
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
-copies of the Software, and to permit persons to whom the Software is 
-furnished to do so, subject to the following conditions:
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-The above copyright notice and this permission notice shall be 
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, 
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-DEALINGS IN THE SOFTWARE.
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
