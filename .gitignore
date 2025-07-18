@@ -7,4 +7,5 @@ app/build/
 local.properties
 *.iml
 *.class
-
+gradle.propeties
+test0.jks
