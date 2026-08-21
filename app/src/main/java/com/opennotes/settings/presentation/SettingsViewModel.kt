@@ -19,6 +19,8 @@
 package com.opennotes.settings.presentation
 
 import android.net.Uri
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.opennotes.notes.domain.model.AppIcon
@@ -151,6 +153,16 @@ class SettingsViewModel
             viewModelScope.launch {
                 dataStoreRepository.saveSettings(newSettings)
             }
+        }
+
+        fun updateLanguage(languageTag: String) {
+            val appLocale: LocaleListCompat =
+                if (languageTag.isEmpty()) {
+                    LocaleListCompat.getEmptyLocaleList()
+                } else {
+                    LocaleListCompat.forLanguageTags(languageTag)
+                }
+            AppCompatDelegate.setApplicationLocales(appLocale)
         }
 
         fun onExportClick() {

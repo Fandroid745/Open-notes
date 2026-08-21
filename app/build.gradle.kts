@@ -66,6 +66,10 @@ android {
         jvmTarget = "17"
     }
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true

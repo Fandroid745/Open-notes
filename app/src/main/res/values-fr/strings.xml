@@ -19,6 +19,8 @@
     <string name="app_icon_cancel">Annuler</string>
     <string name="support_github_sponsors">Soutenez-moi sur GitHub Sponsors</string>
     <string name="support_github_description">Un don mensuel ou ponctuel finance directement le développement</string>
+    <string name="help_translate">Aider à traduire</string>
+    <string name="help_translate_description">Traduisez Open Notes dans votre langue</string>
     <string name="license_label">Licence</string>
     <string name="license_gpl">Licence GPL-3.0</string>
     <string name="delete">Supprimer</string>
@@ -75,5 +77,11 @@
     <string name="theme_system">Système</string>
     <string name="theme_light">Clair</string>
     <string name="theme_dark">Sombre</string>
+    <string name="settings_language_title">Langue</string>
+    <string name="settings_language_subtitle">Changer la langue de l’application</string>
+    <string name="language_default">Système par défaut</string>
+    <string name="language_en">Anglais</string>
+    <string name="language_es">Espagnol</string>
+    <string name="language_fr">Français</string>
     <string name="navigate_desc">Naviguer</string>
 </resources>

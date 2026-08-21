@@ -15,10 +15,12 @@
     <string name="sort_title_za">Título Z-A</string>
     <string name="app_icon_change_title">¿Cambio de App Icon?</string>
     <string name="app_icon_change_message">Cambiar el icono de aplicación requiere que la aplicación reinicia. Su pantalla de inicio puede refrescar momentáneamente. ¿Desea proceder?</string>
-    <string name="app_icon_restart">Restart</string>
+    <string name="app_icon_restart">Reiniciar</string>
     <string name="app_icon_cancel">Cancelar</string>
     <string name="support_github_sponsors">Apoyame en los patrocinadores de Github</string>
     <string name="support_github_description">Desarrollo de fondos mensuales o indirectos</string>
+    <string name="help_translate">Ayuda a traducir</string>
+    <string name="help_translate_description">Traduce Open Notes a tu idioma</string>
     <string name="license_label">Licencia</string>
     <string name="license_gpl">GPL-3.0 Licencia</string>
     <string name="delete">Suprimir</string>
@@ -71,9 +73,15 @@
     <string name="dynamic_label">Dinámica dinámica</string>
     <string name="color_label">Color</string>
     <string name="theme_title">Tema</string>
-    <string name="app_icon_color_title">App Icon Color</string>
+    <string name="app_icon_color_title">Color del icono</string>
     <string name="theme_system">Sistema</string>
     <string name="theme_light">Luz</string>
     <string name="theme_dark">Oscuro</string>
-    <string name="navigate_desc">Navigate</string>
+    <string name="settings_language_title">Idioma</string>
+    <string name="settings_language_subtitle">Cambiar el idioma de la aplicación</string>
+    <string name="language_default">Sistema predeterminado</string>
+    <string name="language_en">Inglés</string>
+    <string name="language_es">Español</string>
+    <string name="language_fr">Francés</string>
+    <string name="navigate_desc">Navegar</string>
 </resources>
