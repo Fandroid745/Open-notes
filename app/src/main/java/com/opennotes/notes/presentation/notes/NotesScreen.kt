@@ -32,11 +32,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -48,10 +50,13 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.presentation.notes.components.NoteItem
 import com.opennotes.notes.presentation.util.Screen
+import com.opennotes.settings.domain.model.NotesLayout
+import com.opennotes.settings.presentation.SettingsViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,8 +64,10 @@ import kotlinx.coroutines.launch
 fun NotesScreen(
     navController: NavController,
     viewModel: NotesViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.value
+    val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
     val haptic = LocalHapticFeedback.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -224,6 +231,26 @@ fun NotesScreen(
                             },
                             trailingIcon = {
                                 Row {
+                                    IconButton(onClick = {
+                                        val newLayout =
+                                            if (settings.notesLayout == NotesLayout.GRID) {
+                                                NotesLayout.COLUMN
+                                            } else {
+                                                NotesLayout.GRID
+                                            }
+                                        settingsViewModel.updateNotesLayout(newLayout)
+                                    }) {
+                                        Icon(
+                                            imageVector =
+                                                if (settings.notesLayout == NotesLayout.GRID) {
+                                                    Icons.Default.ViewAgenda
+                                                } else {
+                                                    Icons.Default.GridView
+                                                },
+                                            contentDescription = stringResource(R.string.notes_layout_toggle),
+                                            modifier = Modifier.size(25.dp),
+                                        )
+                                    }
                                     IconButton(onClick = { showSortSheet = true }) {
                                         Icon(
                                             imageVector = Icons.Default.SwapVert,
@@ -266,7 +293,7 @@ fun NotesScreen(
                 val otherNotes = state.notes.filter { !it.isPinned }
 
                 LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(2),
+                    columns = StaggeredGridCells.Fixed(if (settings.notesLayout == NotesLayout.GRID) 2 else 1),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

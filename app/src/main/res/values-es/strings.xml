@@ -77,7 +77,6 @@
     <string name="theme_system">Sistema</string>
     <string name="theme_light">Luz</string>
     <string name="theme_dark">Oscuro</string>
-    <string name="settings_language_title">Idioma</string>
     <string name="settings_language_subtitle">Cambiar el idioma de la aplicación</string>
     <string name="language_default">Sistema predeterminado</string>
     <string name="language_en">Inglés</string>

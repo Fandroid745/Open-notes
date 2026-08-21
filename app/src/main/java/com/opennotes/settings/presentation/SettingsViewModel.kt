@@ -30,6 +30,7 @@ import com.opennotes.notes.domain.util.ImportResult
 import com.opennotes.settings.data.repository.DataStoreRepository
 import com.opennotes.settings.domain.model.Settings
 import com.opennotes.settings.domain.model.ThemeMode
+import com.opennotes.settings.domain.model.NotesLayout
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -150,6 +151,13 @@ class SettingsViewModel
 
         fun onSecureScreenToggleRequest(enable: Boolean) {
             val newSettings = settings.value.copy(secureScreen = enable)
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(newSettings)
+            }
+        }
+
+        fun updateNotesLayout(layout: NotesLayout) {
+            val newSettings = settings.value.copy(notesLayout = layout)
             viewModelScope.launch {
                 dataStoreRepository.saveSettings(newSettings)
             }

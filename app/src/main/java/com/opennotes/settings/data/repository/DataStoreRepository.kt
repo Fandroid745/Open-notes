@@ -26,6 +26,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.opennotes.notes.domain.model.AppIcon
+import com.opennotes.settings.domain.model.NotesLayout
 import com.opennotes.settings.domain.model.Settings
 import com.opennotes.settings.domain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
@@ -52,6 +53,7 @@ class DataStoreRepository
             private val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
             private val BIOMETRIC_LOCK = booleanPreferencesKey("biometric_lock")
             private val SECURE_SCREEN = booleanPreferencesKey("secure_screen")
+            private val NOTES_LAYOUT = stringPreferencesKey("notes_layout")
 
             // Legacy settings for backward compatibility
             private val DARK_THEME = booleanPreferencesKey("dark_theme")
@@ -71,6 +73,7 @@ class DataStoreRepository
                 preferences[DYNAMIC_COLOR] = settings.dynamicColor
                 preferences[BIOMETRIC_LOCK] = settings.biometricLock
                 preferences[SECURE_SCREEN] = settings.secureScreen
+                preferences[NOTES_LAYOUT] = settings.notesLayout.name
 
                 // Also update legacy fields for compatibility
                 when (settings.themeMode) {
@@ -128,6 +131,13 @@ class DataStoreRepository
                     val dynamicColor = preferences[DYNAMIC_COLOR] ?: true
                     val biometricLock = preferences[BIOMETRIC_LOCK] ?: false
                     val secureScreen = preferences[SECURE_SCREEN] ?: false
+                    val notesLayoutName = preferences[NOTES_LAYOUT] ?: NotesLayout.GRID.name
+                    val notesLayout =
+                        try {
+                            NotesLayout.valueOf(notesLayoutName)
+                        } catch (e: IllegalArgumentException) {
+                            NotesLayout.GRID
+                        }
 
                     Settings(
                         themeMode = themeMode,
@@ -137,6 +147,7 @@ class DataStoreRepository
                         dynamicColor = dynamicColor,
                         biometricLock = biometricLock,
                         secureScreen = secureScreen,
+                        notesLayout = notesLayout,
                     )
                 }
 
@@ -182,6 +193,14 @@ class DataStoreRepository
                 secureScreen = prefs[SECURE_SCREEN] ?: defaultSettings.secureScreen,
                 colorScheme = prefs[COLOR_SCHEME]?.toLongOrNull() ?: 0L,
                 dynamicColor = prefs[DYNAMIC_COLOR] ?: defaultSettings.dynamicColor,
+                notesLayout =
+                    prefs[NOTES_LAYOUT]?.let {
+                        try {
+                            NotesLayout.valueOf(it)
+                        } catch (e: IllegalArgumentException) {
+                            defaultSettings.notesLayout
+                        }
+                    } ?: defaultSettings.notesLayout,
                 // Legacy fields for compatibility
                 darkTheme = prefs[DARK_THEME] ?: defaultSettings.darkTheme,
                 systemTheme = prefs[AUTOMATIC_THEME] ?: defaultSettings.systemTheme,

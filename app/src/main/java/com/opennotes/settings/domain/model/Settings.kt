@@ -27,6 +27,11 @@ enum class ThemeMode {
     DARK,
 }
 
+enum class NotesLayout {
+    GRID,
+    COLUMN,
+}
+
 data class Settings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val appIcon: AppIcon = AppIcon.DEFAULT,
@@ -35,6 +40,7 @@ data class Settings(
     val secureScreen: Boolean = false,
     val colorScheme: Long = 0L,
     val dynamicColor: Boolean = true,
+    val notesLayout: NotesLayout = NotesLayout.GRID,
     // Legacy fields - keeping for migration compatibility
     @Deprecated("Use themeMode instead") val darkTheme: Boolean = false,
     @Deprecated("Use themeMode instead") val systemTheme: Boolean = true,
