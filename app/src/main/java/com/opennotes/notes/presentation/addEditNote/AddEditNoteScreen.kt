@@ -62,6 +62,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Visibility
@@ -115,6 +116,7 @@ import com.opennotes.notes.presentation.addEditNote.components.ReminderDialog
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownField
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownFormatter
 import com.opennotes.notes.presentation.util.formatToDateTime
+import com.opennotes.settings.presentation.CustomColorDialog
 import com.opennotes.ui.theme.NoteColorPalette
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -187,6 +189,7 @@ fun AddEditNoteScreen(
     val scope = rememberCoroutineScope()
 
     var showColorPicker by remember { mutableStateOf(false) }
+    var showCustomColorDialog by remember { mutableStateOf(false) }
     var showFormatToolbar by remember { mutableStateOf(false) }
 
     Box(modifier = modifier) {
@@ -479,7 +482,28 @@ fun AddEditNoteScreen(
                             .padding(bottom = 32.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    item {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(contentColor.copy(alpha = 0.1f))
+                                .clickable {
+                                    showColorPicker = false
+                                    showCustomColorDialog = true
+                                }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = stringResource(R.string.custom_color),
+                                tint = contentColor
+                            )
+                        }
+                    }
+
                     items(noteColors) { color ->
                         val colorInt = remember(color) { color.toArgb() }
                         val isSelected = viewModel.noteColor.value == colorInt
@@ -581,6 +605,25 @@ fun AddEditNoteScreen(
                 onDismiss = { showReminderDialog = false },
                 backgroundColor = backgroundColor,
                 contentColor = contentColor,
+            )
+        }
+
+        if (showCustomColorDialog) {
+            CustomColorDialog(
+                initialColor = backgroundColor,
+                onConfirm = { color ->
+                    val colorInt = color.toArgb()
+                    scope.launch {
+                        noteBackgroundAnimatable.animateTo(
+                            targetValue = Color(colorInt),
+                            animationSpec = tween(durationMillis = 500),
+                        )
+                    }
+                    viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
+                    showCustomColorDialog = false
+                    showColorPicker = false
+                },
+                onDismiss = { showCustomColorDialog = false }
             )
         }
     }

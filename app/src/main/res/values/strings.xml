@@ -94,6 +94,9 @@
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="custom_color">Custom</string>
+    <string name="enter_hex_code">Enter hex code (e.g. #FF5733)</string>
+    <string name="invalid_hex_code">Invalid hex code</string>
     <string name="notes_layout_toggle">Toggle layout</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_language_subtitle">Change app language</string>
