@@ -28,9 +28,9 @@ import com.opennotes.notes.domain.usecase.NoteUseCases
 import com.opennotes.notes.domain.util.ExportResult
 import com.opennotes.notes.domain.util.ImportResult
 import com.opennotes.settings.data.repository.DataStoreRepository
+import com.opennotes.settings.domain.model.NotesLayout
 import com.opennotes.settings.domain.model.Settings
 import com.opennotes.settings.domain.model.ThemeMode
-import com.opennotes.settings.domain.model.NotesLayout
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

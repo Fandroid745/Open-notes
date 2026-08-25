@@ -18,8 +18,6 @@
 
 package com.opennotes.notes.presentation.notes
 
-import com.opennotes.R
-import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -47,11 +45,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.opennotes.R
 import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.presentation.notes.components.NoteItem
 import com.opennotes.notes.presentation.util.Screen

@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -48,13 +49,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.opennotes.R
 import com.opennotes.notes.presentation.addEditNote.AddEditNoteScreen
 import com.opennotes.notes.presentation.notes.NotesScreen
 import com.opennotes.notes.presentation.util.Screen
@@ -65,7 +66,6 @@ import com.opennotes.settings.presentation.BackupScreen
 import com.opennotes.settings.presentation.PrivacySettingsScreen
 import com.opennotes.settings.presentation.SettingsScreen
 import com.opennotes.settings.presentation.SettingsViewModel
-import com.opennotes.R
 import com.opennotes.ui.theme.NoteColorPalette
 import com.opennotes.ui.theme.OpenNotesTheme
 import dagger.hilt.android.AndroidEntryPoint

@@ -38,57 +38,61 @@ import com.opennotes.R
 fun CustomColorDialog(
     initialColor: Color,
     onConfirm: (Color) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
-    var hexText by remember { 
+    var hexText by remember {
         val argb = initialColor.toArgb()
         // Format as RRGGBB (ignoring alpha for now as per user request for simplicity/certainty)
-        mutableStateOf(String.format("%06X", (0xFFFFFF and argb))) 
+        mutableStateOf(String.format("%06X", (0xFFFFFF and argb)))
     }
-    
-    val parsedColor = remember(hexText) {
-        try {
-            val sanitized = hexText.removePrefix("#")
-            if (sanitized.length == 6) {
-                Color(android.graphics.Color.parseColor("#$sanitized"))
-            } else {
+
+    val parsedColor =
+        remember(hexText) {
+            try {
+                val sanitized = hexText.removePrefix("#")
+                if (sanitized.length == 6) {
+                    Color(android.graphics.Color.parseColor("#$sanitized"))
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
                 null
             }
-        } catch (e: Exception) {
-            null
         }
-    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
                 text = stringResource(R.string.custom_color),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Live Preview
                 Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(parsedColor ?: Color.Gray)
-                        .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape)
+                    modifier =
+                        Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .background(parsedColor ?: Color.Gray)
+                            .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
                 )
 
                 OutlinedTextField(
                     value = hexText,
                     onValueChange = { newValue ->
                         // Filter to allow only hex chars and limit length
-                        val filtered = newValue.removePrefix("#")
-                            .filter { it.isDigit() || it.uppercaseChar() in 'A'..'F' }
-                            .take(6)
+                        val filtered =
+                            newValue
+                                .removePrefix("#")
+                                .filter { it.isDigit() || it.uppercaseChar() in 'A'..'F' }
+                                .take(6)
                         hexText = filtered
                     },
                     label = { Text(stringResource(R.string.enter_hex_code)) },
@@ -100,14 +104,14 @@ fun CustomColorDialog(
                         if (hexText.isNotEmpty() && parsedColor == null) {
                             Text(stringResource(R.string.invalid_hex_code))
                         }
-                    }
+                    },
                 )
             }
         },
         confirmButton = {
             Button(
                 onClick = { parsedColor?.let { onConfirm(it) } },
-                enabled = parsedColor != null
+                enabled = parsedColor != null,
             ) {
                 Text(stringResource(R.string.ok))
             }
@@ -116,6 +120,7 @@ fun CustomColorDialog(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.cancel))
             }
-        }
+        },
     )
 }
+

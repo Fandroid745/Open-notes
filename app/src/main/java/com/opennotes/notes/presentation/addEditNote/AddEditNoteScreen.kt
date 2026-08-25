@@ -18,8 +18,6 @@
 
 package com.opennotes.notes.presentation.addEditNote
 
-import com.opennotes.R
-import androidx.compose.ui.res.stringResource
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -55,6 +53,7 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
@@ -62,7 +61,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Visibility
@@ -107,10 +105,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.opennotes.R
 import com.opennotes.notes.presentation.addEditNote.components.FormatToolbar
 import com.opennotes.notes.presentation.addEditNote.components.ReminderDialog
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownField
@@ -482,24 +482,25 @@ fun AddEditNoteScreen(
                             .padding(bottom = 32.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     item {
                         Box(
                             contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .background(contentColor.copy(alpha = 0.1f))
-                                .clickable {
-                                    showColorPicker = false
-                                    showCustomColorDialog = true
-                                }
+                            modifier =
+                                Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(contentColor.copy(alpha = 0.1f))
+                                    .clickable {
+                                        showColorPicker = false
+                                        showCustomColorDialog = true
+                                    },
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = stringResource(R.string.custom_color),
-                                tint = contentColor
+                                tint = contentColor,
                             )
                         }
                     }
@@ -623,7 +624,7 @@ fun AddEditNoteScreen(
                     showCustomColorDialog = false
                     showColorPicker = false
                 },
-                onDismiss = { showCustomColorDialog = false }
+                onDismiss = { showCustomColorDialog = false },
             )
         }
     }

@@ -18,8 +18,6 @@
 
 package com.opennotes.notes.presentation.addEditNote.components
 
-import com.opennotes.R
-import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -38,8 +36,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.opennotes.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date

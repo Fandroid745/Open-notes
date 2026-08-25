@@ -18,7 +18,6 @@
 
 package com.opennotes.settings.presentation
 
-import com.opennotes.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +41,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.opennotes.R
 
 @Composable
 fun SettingItem(

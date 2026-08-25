@@ -38,7 +38,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.Support
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Card
@@ -165,10 +164,10 @@ fun AboutScreen(navController: NavController) {
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Notes,
+                                    painter = painterResource(R.drawable.ic_logo_monochrome),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(32.dp),
+                                    modifier = Modifier.size(40.dp),
                                 )
                             }
                             Spacer(modifier = Modifier.width(16.dp))

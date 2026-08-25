@@ -18,7 +18,6 @@
 
 package com.opennotes.settings.presentation
 
-import com.opennotes.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -59,6 +58,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.opennotes.R
 import com.opennotes.notes.domain.model.AppIcon
 
 @Composable
