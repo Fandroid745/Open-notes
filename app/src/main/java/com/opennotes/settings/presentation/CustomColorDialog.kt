@@ -28,11 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.opennotes.R
+import com.opennotes.util.toColorOrNull
+import com.opennotes.util.toHexRgb
 
 @Composable
 fun CustomColorDialog(
@@ -41,24 +42,11 @@ fun CustomColorDialog(
     onDismiss: () -> Unit,
 ) {
     var hexText by remember {
-        val argb = initialColor.toArgb()
-        // Format as RRGGBB (ignoring alpha for now as per user request for simplicity/certainty)
-        mutableStateOf(String.format("%06X", (0xFFFFFF and argb)))
+        mutableStateOf(initialColor.toHexRgb())
     }
 
     val parsedColor =
-        remember(hexText) {
-            try {
-                val sanitized = hexText.removePrefix("#")
-                if (sanitized.length == 6) {
-                    Color(android.graphics.Color.parseColor("#$sanitized"))
-                } else {
-                    null
-                }
-            } catch (e: Exception) {
-                null
-            }
-        }
+        remember(hexText) { hexText.toColorOrNull() }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -123,4 +111,3 @@ fun CustomColorDialog(
         },
     )
 }
-

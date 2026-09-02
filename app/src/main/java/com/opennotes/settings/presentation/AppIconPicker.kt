@@ -55,11 +55,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.opennotes.R
 import com.opennotes.notes.domain.model.AppIcon
+import com.opennotes.util.contentColorForBackground
 
 @Composable
 fun AppIconPicker(
@@ -124,7 +124,7 @@ fun AppIconPicker(
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "Selected",
-                                tint = if (color.luminance() > 0.5) Color.Black else Color.White,
+                                tint = color.contentColorForBackground(),
                             )
                         }
                     }
