@@ -63,6 +63,7 @@ import com.opennotes.settings.domain.model.ThemeMode
 import com.opennotes.settings.presentation.AboutScreen
 import com.opennotes.settings.presentation.AppearanceSettingsScreen
 import com.opennotes.settings.presentation.BackupScreen
+import com.opennotes.settings.presentation.BehaviorSettingsScreen
 import com.opennotes.settings.presentation.PrivacySettingsScreen
 import com.opennotes.settings.presentation.SettingsScreen
 import com.opennotes.settings.presentation.SettingsViewModel
@@ -219,6 +220,8 @@ class MainActivity : AppCompatActivity() {
                                     navController = navController,
                                     noteColor = resolvedColor,
                                     isDarkTheme = isDarkTheme,
+                                    startInReadingMode = currentSettings.openInReadingMode,
+                                    markdownEnabled = currentSettings.markdownEnabled,
                                 )
                             }
                             composable(route = Screen.SettingsScreen.route) {
@@ -235,6 +238,12 @@ class MainActivity : AppCompatActivity() {
                             }
                             composable(route = Screen.AppearanceSettingsScreen.route) {
                                 AppearanceSettingsScreen(
+                                    navController = navController,
+                                    viewModel = settingsViewModel,
+                                )
+                            }
+                            composable(route = Screen.BehaviorSettingsScreen.route) {
+                                BehaviorSettingsScreen(
                                     navController = navController,
                                     viewModel = settingsViewModel,
                                 )

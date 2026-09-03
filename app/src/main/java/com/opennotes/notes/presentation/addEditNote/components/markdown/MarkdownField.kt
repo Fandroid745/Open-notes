@@ -43,6 +43,7 @@ fun MarkdownField(
     contentTextFieldValue: TextFieldValue,
     contentColor: Color,
     isPreviewMode: Boolean,
+    markdownEnabled: Boolean,
     interactionSource: MutableInteractionSource,
     contentFocusRequester: FocusRequester,
     titleFocusRequester: FocusRequester,
@@ -62,8 +63,9 @@ fun MarkdownField(
             MarkdownText(
                 radius = 8,
                 markdown = titleText.ifBlank { "No title" },
-                isPreview = true,
-                isEnabled = true,
+                isPreview = false,
+                isReadOnly = true,
+                isEnabled = markdownEnabled,
                 modifier = Modifier.fillMaxWidth(),
                 fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                 onContentChange = {},
@@ -75,7 +77,8 @@ fun MarkdownField(
                 radius = 8,
                 markdown = contentTextFieldValue.text.ifBlank { "No content to preview" },
                 isPreview = false,
-                isEnabled = true,
+                isReadOnly = true,
+                isEnabled = markdownEnabled,
                 modifier =
                     Modifier
                         .fillMaxWidth()

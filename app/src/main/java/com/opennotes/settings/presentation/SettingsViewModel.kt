@@ -112,6 +112,20 @@ class SettingsViewModel
             }
         }
 
+        fun updateOpenInReadingMode(openInReadingMode: Boolean) {
+            val newSettings = settings.value.copy(openInReadingMode = openInReadingMode)
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(newSettings)
+            }
+        }
+
+        fun updateMarkdownEnabled(markdownEnabled: Boolean) {
+            val newSettings = settings.value.copy(markdownEnabled = markdownEnabled)
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(newSettings)
+            }
+        }
+
         fun updateColorScheme(colorLong: Long) {
             val newSettings =
                 settings.value.copy(

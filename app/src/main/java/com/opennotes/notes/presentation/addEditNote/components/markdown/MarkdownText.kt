@@ -146,6 +146,7 @@ fun MarkdownText(
     radius: Int,
     markdown: String,
     isPreview: Boolean = false,
+    isReadOnly: Boolean = false,
     isEnabled: Boolean,
     modifier: Modifier = Modifier.fillMaxWidth(),
     weight: FontWeight = FontWeight.Normal,
@@ -155,7 +156,7 @@ fun MarkdownText(
     settingsViewModel: SettingsViewModel? = null,
     textColor: Color = Color.Unspecified,
 ) {
-    if (!isEnabled || markdown.isBlank()) {
+    if (markdown.isBlank()) {
         StaticMarkdownText(
             markdown = if (markdown.isBlank()) "content" else markdown,
             modifier = modifier,
@@ -163,6 +164,29 @@ fun MarkdownText(
             fontSize = fontSize,
             textColor = textColor,
         )
+        return
+    }
+
+    if (!isEnabled) {
+        if (isReadOnly) {
+            SelectionContainer {
+                Text(
+                    text = markdown,
+                    fontSize = fontSize,
+                    fontWeight = weight,
+                    color = textColor,
+                    modifier = modifier,
+                )
+            }
+        } else {
+            StaticMarkdownText(
+                markdown = markdown,
+                modifier = modifier,
+                weight = weight,
+                fontSize = fontSize,
+                textColor = textColor,
+            )
+        }
         return
     }
 
@@ -216,6 +240,7 @@ fun MarkdownText(
     MarkdownContent(
         radius = radius,
         isPreview = isPreview,
+        isReadOnly = isReadOnly,
         content = parsedContent,
         modifier = modifier,
         spacing = spacing,
@@ -253,6 +278,7 @@ fun StaticMarkdownText(
 fun MarkdownContent(
     radius: Int,
     isPreview: Boolean,
+    isReadOnly: Boolean,
     content: List<MarkdownElement>,
     modifier: Modifier,
     spacing: Dp,
@@ -284,6 +310,7 @@ fun MarkdownContent(
                     fontSize = fontSize,
                     lines = lines,
                     isPreview = true,
+                    isReadOnly = isReadOnly,
                     onContentChange = onContentChange,
                     textColor = textColor,
                 )
@@ -307,6 +334,7 @@ fun MarkdownContent(
                         fontSize = fontSize,
                         lines = lines,
                         isPreview = isPreview,
+                        isReadOnly = isReadOnly,
                         onContentChange = onContentChange,
                         textColor = textColor,
                     )
@@ -325,6 +353,7 @@ fun RenderMarkdownElement(
     fontSize: TextUnit,
     lines: List<String>,
     isPreview: Boolean,
+    isReadOnly: Boolean,
     onContentChange: (String) -> Unit,
     textColor: Color,
 ) {
@@ -363,7 +392,7 @@ fun RenderMarkdownElement(
                 checked = element.checked,
                 textColor = textColor,
                 onCheckedChange =
-                    if (isPreview) {
+                    if (isPreview || isReadOnly) {
                         null
                     } else {
                         { newChecked ->

@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
@@ -237,6 +238,17 @@ fun SettingsScreen(
                     subtitle = stringResource(R.string.settings_appearance_subtitle),
                     icon = Icons.Default.Palette,
                     onClick = { navController.navigate(Screen.AppearanceSettingsScreen.route) },
+                    isFirst = true,
+                    isLast = true,
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = stringResource(R.string.settings_behavior_title),
+                    subtitle = stringResource(R.string.settings_behavior_subtitle),
+                    icon = Icons.Default.Edit,
+                    onClick = { navController.navigate(Screen.BehaviorSettingsScreen.route) },
                     isFirst = true,
                     isLast = true,
                 )

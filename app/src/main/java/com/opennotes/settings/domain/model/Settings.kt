@@ -38,6 +38,8 @@ data class Settings(
     val blackTheme: Boolean = false,
     val biometricLock: Boolean = false,
     val secureScreen: Boolean = false,
+    val openInReadingMode: Boolean = false,
+    val markdownEnabled: Boolean = true,
     val colorScheme: Long = 0L,
     val dynamicColor: Boolean = true,
     val notesLayout: NotesLayout = NotesLayout.GRID,

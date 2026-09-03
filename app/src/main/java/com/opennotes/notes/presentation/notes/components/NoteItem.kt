@@ -54,6 +54,7 @@ import com.opennotes.util.contentColorForBackground
 @Composable
 fun NoteItem(
     note: Note,
+    markdownEnabled: Boolean = true,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     cornerRadius: Dp = 12.dp,
@@ -115,7 +116,8 @@ fun NoteItem(
                         radius = cornerRadius.value.toInt(),
                         markdown = note.title,
                         isPreview = true,
-                        isEnabled = true,
+                        isEnabled = markdownEnabled,
+                        isReadOnly = true,
                         modifier = Modifier.fillMaxWidth(),
                         fontSize = 16.sp,
                         spacing = 1.dp,
@@ -128,7 +130,8 @@ fun NoteItem(
                         radius = cornerRadius.value.toInt(),
                         markdown = note.content,
                         isPreview = true,
-                        isEnabled = true,
+                        isEnabled = markdownEnabled,
+                        isReadOnly = true,
                         modifier =
                             Modifier
                                 .fillMaxWidth()

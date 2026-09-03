@@ -313,6 +313,7 @@ fun NotesScreen(
                         ) { note ->
                             NoteItem(
                                 note = note,
+                                markdownEnabled = settings.markdownEnabled,
                                 isSelected = state.selectedNotes.contains(note),
                                 modifier = Modifier.fillMaxWidth(),
                                 onNoteClick = {
@@ -350,6 +351,7 @@ fun NotesScreen(
                         ) { note ->
                             NoteItem(
                                 note = note,
+                                markdownEnabled = settings.markdownEnabled,
                                 isSelected = state.selectedNotes.contains(note),
                                 modifier = Modifier.fillMaxWidth(),
                                 onNoteClick = {

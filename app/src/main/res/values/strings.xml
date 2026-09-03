@@ -56,6 +56,8 @@
     <string name="settings_backup_restore_subtitle">Export and import your notes</string>
     <string name="settings_appearance_title">Appearance</string>
     <string name="settings_appearance_subtitle">Theme, Color scheme, Black Theme</string>
+    <string name="settings_behavior_title">Behavior</string>
+    <string name="settings_behavior_subtitle">Reading mode, Markdown mode</string>
     <string name="settings_privacy_title">Privacy</string>
     <string name="settings_privacy_subtitle">Biometric lock, Secure Screen</string>
     <string name="settings_about_title">About</string>
@@ -68,6 +70,11 @@
     <string name="switch_on">On</string>
     <string name="switch_off">Off</string>
     <string name="appearance_title">Appearance</string>
+    <string name="behavior_title">Behavior</string>
+    <string name="open_in_reading_mode_title">Reading mode</string>
+    <string name="open_in_reading_mode_subtitle">Start notes in a copy-friendly view</string>
+    <string name="markdown_enabled_title">Markdown mode</string>
+    <string name="markdown_enabled_subtitle">Show markdown formatting in notes</string>
     <string name="dynamic_color_title">Dynamic Color</string>
     <string name="dynamic_color_subtitle">Adapt theme colors from your wallpaper</string>
     <string name="black_theme_title">Black Theme</string>
