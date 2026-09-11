@@ -61,28 +61,34 @@ class ImportUseCases(
                     val rawNote = element as? JsonObject ?: return@mapNotNull null
                     val title = rawNote["title"]?.jsonPrimitive?.contentOrNull?.trim()
                     val content = rawNote["content"]?.jsonPrimitive?.contentOrNull?.trim()
-                    val timestamp = rawNote["timestamp"]?.jsonPrimitive?.longOrNull
-                    val color = rawNote["color"]?.jsonPrimitive?.intOrNull
 
-                    // Only create Note if all required fields are present and valid
-                    if ((title?.isNotBlank() == true || content?.isNotBlank() == true) &&
-                        timestamp != null &&
-                        color != null
-                    ) {
+                    // Robust time mapping: createdAt -> timestamp -> now
+                    val now = System.currentTimeMillis()
+                    val createdAt =
+                        rawNote["createdAt"]?.jsonPrimitive?.longOrNull
+                            ?: rawNote["timestamp"]?.jsonPrimitive?.longOrNull
+                            ?: now
+
+                    val updatedAt = rawNote["updatedAt"]?.jsonPrimitive?.longOrNull ?: createdAt
+                    val color = rawNote["color"]?.jsonPrimitive?.intOrNull ?: 0 // Default to transparent/black if missing
+
+                    // Only create Note if it has at least some content or title
+                    if (title?.isNotBlank() == true || content?.isNotBlank() == true) {
                         Note(
                             title = title ?: "",
                             content = content ?: "",
-                            timestamp = timestamp,
+                            createdAt = createdAt,
+                            updatedAt = updatedAt,
                             color = color,
                             id = null,
                         )
                     } else {
-                        null // Skip invalid notes
+                        null // Skip empty notes
                     }
                 }
 
             if (validNotes.isEmpty()) {
-                return ImportResult.Error("No valid notes found ")
+                return ImportResult.Error("No valid notes found")
             }
 
             repository.insertNotes(validNotes)

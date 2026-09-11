@@ -33,6 +33,7 @@ import androidx.work.WorkManager
 import com.opennotes.notes.data.repository.FileHandler
 import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.domain.usecase.NoteUseCases
+import com.opennotes.notes.domain.util.ReminderUtils
 import com.opennotes.notes.presentation.reminder.ReminderWorker
 import com.opennotes.ui.theme.NoteColorPalette
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -95,6 +96,9 @@ class AddEditNoteViewModel
         private var currentNoteId: Int? = null
         private var currentIsPinned: Boolean = false
         private var autoSaveJob: Job? = null
+        
+        // Track if reminder was manually changed in this session to prevent overwrite from DB fetch
+        private var isReminderDirty = false
 
         private fun triggerAutoSave() {
             autoSaveJob?.cancel()
@@ -109,8 +113,8 @@ class AddEditNoteViewModel
             noteId: Int,
             triggerTime: Long,
         ) {
-            val delay = triggerTime - System.currentTimeMillis()
-            if (delay <= 0) return
+            val now = System.currentTimeMillis()
+            val delay = (triggerTime - now).coerceAtLeast(1000L)
 
             val data =
                 Data
@@ -144,22 +148,50 @@ class AddEditNoteViewModel
                 return null
             }
             try {
+                // FIX: Stop overwriting the creation timestamp
+                val now = System.currentTimeMillis()
+                val createdAt = _noteTimestamp.value ?: now
+
+                // If reminder hasn't been changed manually, check if worker updated it in DB
+                var reminderTime = noteReminderTime.value
+                var repeatInterval = noteRepeatInterval.value
+                var repeatUnit = noteRepeatUnit.value
+
+                if (!isReminderDirty && currentNoteId != null) {
+                    noteUseCases.getNote(currentNoteId!!)?.let { dbNote ->
+                        if (dbNote.reminderTime != reminderTime) {
+                            reminderTime = dbNote.reminderTime
+                            repeatInterval = dbNote.repeatInterval
+                            repeatUnit = dbNote.repeatUnit
+                            
+                            // Update UI state to match DB
+                            _noteReminderTime.value = reminderTime
+                            _noteRepeatInterval.value = repeatInterval
+                            _noteRepeatUnit.value = repeatUnit
+                        }
+                    }
+                }
+
                 val note =
                     Note(
                         title = title,
                         content = content,
                         color = noteColor.value,
-                        timestamp = System.currentTimeMillis(),
+                        createdAt = createdAt,
+                        updatedAt = now,
                         isPinned = currentIsPinned,
-                        reminderTime = noteReminderTime.value,
-                        repeatInterval = noteRepeatInterval.value,
-                        repeatUnit = noteRepeatUnit.value,
+                        reminderTime = reminderTime,
+                        repeatInterval = repeatInterval,
+                        repeatUnit = repeatUnit,
                         id = currentNoteId,
                     )
                 val insertedId = noteUseCases.addNote(note)
                 if (currentNoteId == null) {
                     currentNoteId = insertedId
+                    _noteTimestamp.value = createdAt
                 }
+                
+                isReminderDirty = false
                 return insertedId
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -174,10 +206,11 @@ class AddEditNoteViewModel
                         noteUseCases.getNote(noteId)?.also { note ->
                             currentNoteId = note.id
                             currentIsPinned = note.isPinned
-                            _noteTimestamp.value = note.timestamp
+                            _noteTimestamp.value = note.createdAt
                             _noteReminderTime.value = note.reminderTime
                             _noteRepeatInterval.value = note.repeatInterval
                             _noteRepeatUnit.value = note.repeatUnit
+                            
                             if (savedStateHandle.get<String>("title") == null) {
                                 _noteTitle.value =
                                     noteTitle.value.copy(
@@ -193,6 +226,10 @@ class AddEditNoteViewModel
                                 if (savedStateHandle.get<Int>("color") == null) {
                                     _noteColor.intValue = note.color
                                 }
+                                
+                                savedStateHandle["title"] = note.title
+                                savedStateHandle["content"] = note.content
+                                savedStateHandle["color"] = note.color
                             }
                         }
                     }
@@ -215,7 +252,7 @@ class AddEditNoteViewModel
             when (event) {
                 is AddEditNoteEvent.EnteredTitle -> {
                     _noteTitle.value = noteTitle.value.copy(text = event.value)
-                    savedStateHandle["title"] = event.value // persist to SavedStateHandle
+                    savedStateHandle["title"] = event.value 
                     triggerAutoSave()
                 }
                 is AddEditNoteEvent.ChangeTitleFocus -> {
@@ -226,12 +263,12 @@ class AddEditNoteViewModel
                 }
                 is AddEditNoteEvent.EnteredContent -> {
                     _noteContent.value = _noteContent.value.copy(text = event.value)
-                    savedStateHandle["content"] = event.value // persist to SavedStateHandle
+                    savedStateHandle["content"] = event.value
                     triggerAutoSave()
                 }
                 is AddEditNoteEvent.ChangeColor -> {
                     _noteColor.intValue = event.color
-                    savedStateHandle["color"] = event.color // persist to SavedStateHandle
+                    savedStateHandle["color"] = event.color
                     triggerAutoSave()
                 }
                 is AddEditNoteEvent.SaveNote -> {
@@ -284,13 +321,25 @@ class AddEditNoteViewModel
                 }
                 is AddEditNoteEvent.SetReminder -> {
                     viewModelScope.launch {
-                        _noteReminderTime.value = event.timestamp
+                        var finalTimestamp = event.timestamp
+                        val now = System.currentTimeMillis()
+
+                        if (finalTimestamp != null && finalTimestamp <= now) {
+                            if (event.repeatInterval != null && event.repeatInterval > 0 && event.repeatUnit != null) {
+                                finalTimestamp = ReminderUtils.calculateNextTriggerTime(finalTimestamp, event.repeatInterval, event.repeatUnit)
+                            }
+                        }
+
+                        _noteReminderTime.value = finalTimestamp
                         _noteRepeatInterval.value = event.repeatInterval
                         _noteRepeatUnit.value = event.repeatUnit
+                        
+                        isReminderDirty = true
+                        
                         val noteId = saveNoteInternal()
                         if (noteId != null) {
-                            if (event.timestamp != null) {
-                                scheduleReminderWork(noteId, event.timestamp)
+                            if (finalTimestamp != null) {
+                                scheduleReminderWork(noteId, finalTimestamp)
                                 _eventFlow.emit(UiEvent.ShowSnackbar("Reminder set successfully"))
                             } else {
                                 cancelReminderWork(noteId)

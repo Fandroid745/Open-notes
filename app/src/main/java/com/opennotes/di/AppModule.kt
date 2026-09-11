@@ -56,6 +56,7 @@ object AppModule {
                 NoteDatabase.MIGRATION_2_3,
                 NoteDatabase.MIGRATION_3_4,
                 NoteDatabase.MIGRATION_4_5,
+                NoteDatabase.MIGRATION_5_6,
             ).build()
 
     @Provides

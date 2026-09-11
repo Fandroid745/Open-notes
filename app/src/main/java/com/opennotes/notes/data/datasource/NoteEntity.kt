@@ -26,7 +26,8 @@ import com.opennotes.notes.domain.model.Note
 data class NoteEntity(
     val title: String,
     val content: String,
-    val timestamp: Long,
+    val createdAt: Long,
+    val updatedAt: Long,
     val color: Int,
     val isPinned: Boolean = false,
     val reminderTime: Long? = null,
@@ -38,7 +39,8 @@ data class NoteEntity(
         Note(
             title = title,
             content = content,
-            timestamp = timestamp,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
             color = color,
             isPinned = isPinned,
             reminderTime = reminderTime,
@@ -52,7 +54,8 @@ fun Note.toNoteEntity(): NoteEntity =
     NoteEntity(
         title = title,
         content = content,
-        timestamp = timestamp,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         color = color,
         isPinned = isPinned,
         reminderTime = reminderTime,
