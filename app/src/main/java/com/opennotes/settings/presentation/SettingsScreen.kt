@@ -95,9 +95,9 @@ fun SettingsSwitch(
         colors =
             SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.primary,
-                uncheckedThumbColor = MaterialTheme.colorScheme.surface,
+                uncheckedThumbColor = MaterialTheme.colorScheme.outline,
                 checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             ),
     )
 }

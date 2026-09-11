@@ -61,18 +61,25 @@ class ImportUseCases(
                     val rawNote = element as? JsonObject ?: return@mapNotNull null
                     val title = rawNote["title"]?.jsonPrimitive?.contentOrNull?.trim()
                     val content = rawNote["content"]?.jsonPrimitive?.contentOrNull?.trim()
-                    val timestamp = rawNote["timestamp"]?.jsonPrimitive?.longOrNull
+
+                    // Support both old and new schema during import
+                    val createdAt =
+                        rawNote["createdAt"]?.jsonPrimitive?.longOrNull
+                            ?: rawNote["timestamp"]?.jsonPrimitive?.longOrNull
+
+                    val updatedAt = rawNote["updatedAt"]?.jsonPrimitive?.longOrNull ?: createdAt
                     val color = rawNote["color"]?.jsonPrimitive?.intOrNull
 
                     // Only create Note if all required fields are present and valid
                     if ((title?.isNotBlank() == true || content?.isNotBlank() == true) &&
-                        timestamp != null &&
+                        createdAt != null &&
                         color != null
                     ) {
                         Note(
                             title = title ?: "",
                             content = content ?: "",
-                            timestamp = timestamp,
+                            createdAt = createdAt,
+                            updatedAt = updatedAt ?: createdAt,
                             color = color,
                             id = null,
                         )

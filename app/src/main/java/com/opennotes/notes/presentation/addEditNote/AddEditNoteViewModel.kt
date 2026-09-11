@@ -41,6 +41,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -108,9 +109,11 @@ class AddEditNoteViewModel
         private fun scheduleReminderWork(
             noteId: Int,
             triggerTime: Long,
+            repeatInterval: Long? = null,
+            repeatUnit: String? = null,
         ) {
-            val delay = triggerTime - System.currentTimeMillis()
-            if (delay <= 0) return
+            val now = System.currentTimeMillis()
+            val delay = (triggerTime - now).coerceAtLeast(1000L)
 
             val data =
                 Data
@@ -118,12 +121,15 @@ class AddEditNoteViewModel
                     .putInt("NOTE_ID", noteId)
                     .putString("NOTE_TITLE", noteTitle.value.text.takeIf { it.isNotBlank() } ?: "Reminder")
                     .putString("NOTE_CONTENT", noteContent.value.text.takeIf { it.isNotBlank() } ?: "Open note to view details")
-                    .build()
+                    .putLong("REMINDER_TIME", triggerTime)
+
+            repeatInterval?.let { data.putLong("REPEAT_INTERVAL", it) }
+            repeatUnit?.let { data.putString("REPEAT_UNIT", it) }
 
             val workRequest =
                 OneTimeWorkRequestBuilder<ReminderWorker>()
                     .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                    .setInputData(data)
+                    .setInputData(data.build())
                     .build()
 
             WorkManager.getInstance(application).enqueueUniqueWork(
@@ -131,6 +137,33 @@ class AddEditNoteViewModel
                 ExistingWorkPolicy.REPLACE,
                 workRequest,
             )
+        }
+
+        private fun calculateNextTriggerTime(
+            currentTime: Long,
+            interval: Long,
+            unit: String,
+        ): Long {
+            val calendar = Calendar.getInstance().apply { timeInMillis = currentTime }
+            val now = System.currentTimeMillis()
+
+            var safetyBreak = 0
+            while (calendar.timeInMillis <= now && safetyBreak < 100) {
+                when (unit) {
+                    "MINUTES" -> calendar.add(Calendar.MINUTE, interval.toInt())
+                    "HOURS" -> calendar.add(Calendar.HOUR_OF_DAY, interval.toInt())
+                    "DAYS" -> calendar.add(Calendar.DAY_OF_YEAR, interval.toInt())
+                    "WEEKS" -> calendar.add(Calendar.WEEK_OF_YEAR, interval.toInt())
+                    "MONTHS" -> calendar.add(Calendar.MONTH, interval.toInt())
+                    "YEARS" -> calendar.add(Calendar.YEAR, interval.toInt())
+                    else -> {
+                        calendar.add(Calendar.DAY_OF_YEAR, interval.toInt())
+                        break
+                    }
+                }
+                safetyBreak++
+            }
+            return calendar.timeInMillis
         }
 
         private fun cancelReminderWork(noteId: Int) {
@@ -144,12 +177,16 @@ class AddEditNoteViewModel
                 return null
             }
             try {
+                val now = System.currentTimeMillis()
+                val createdAt = _noteTimestamp.value ?: now
+
                 val note =
                     Note(
                         title = title,
                         content = content,
                         color = noteColor.value,
-                        timestamp = System.currentTimeMillis(),
+                        createdAt = createdAt,
+                        updatedAt = now,
                         isPinned = currentIsPinned,
                         reminderTime = noteReminderTime.value,
                         repeatInterval = noteRepeatInterval.value,
@@ -159,6 +196,7 @@ class AddEditNoteViewModel
                 val insertedId = noteUseCases.addNote(note)
                 if (currentNoteId == null) {
                     currentNoteId = insertedId
+                    _noteTimestamp.value = createdAt
                 }
                 return insertedId
             } catch (e: Exception) {
@@ -174,7 +212,7 @@ class AddEditNoteViewModel
                         noteUseCases.getNote(noteId)?.also { note ->
                             currentNoteId = note.id
                             currentIsPinned = note.isPinned
-                            _noteTimestamp.value = note.timestamp
+                            _noteTimestamp.value = note.createdAt
                             _noteReminderTime.value = note.reminderTime
                             _noteRepeatInterval.value = note.repeatInterval
                             _noteRepeatUnit.value = note.repeatUnit
@@ -193,6 +231,10 @@ class AddEditNoteViewModel
                                 if (savedStateHandle.get<Int>("color") == null) {
                                     _noteColor.intValue = note.color
                                 }
+
+                                savedStateHandle["title"] = note.title
+                                savedStateHandle["content"] = note.content
+                                savedStateHandle["color"] = note.color
                             }
                         }
                     }
@@ -215,7 +257,7 @@ class AddEditNoteViewModel
             when (event) {
                 is AddEditNoteEvent.EnteredTitle -> {
                     _noteTitle.value = noteTitle.value.copy(text = event.value)
-                    savedStateHandle["title"] = event.value // persist to SavedStateHandle
+                    savedStateHandle["title"] = event.value
                     triggerAutoSave()
                 }
                 is AddEditNoteEvent.ChangeTitleFocus -> {
@@ -226,12 +268,12 @@ class AddEditNoteViewModel
                 }
                 is AddEditNoteEvent.EnteredContent -> {
                     _noteContent.value = _noteContent.value.copy(text = event.value)
-                    savedStateHandle["content"] = event.value // persist to SavedStateHandle
+                    savedStateHandle["content"] = event.value
                     triggerAutoSave()
                 }
                 is AddEditNoteEvent.ChangeColor -> {
                     _noteColor.intValue = event.color
-                    savedStateHandle["color"] = event.color // persist to SavedStateHandle
+                    savedStateHandle["color"] = event.color
                     triggerAutoSave()
                 }
                 is AddEditNoteEvent.SaveNote -> {
@@ -287,10 +329,24 @@ class AddEditNoteViewModel
                         _noteReminderTime.value = event.timestamp
                         _noteRepeatInterval.value = event.repeatInterval
                         _noteRepeatUnit.value = event.repeatUnit
+
+                        var finalTimestamp = event.timestamp
+                        val now = System.currentTimeMillis()
+
+                        if (finalTimestamp != null && finalTimestamp <= now) {
+                            if (event.repeatInterval != null && event.repeatInterval > 0 && event.repeatUnit != null) {
+                                finalTimestamp = calculateNextTriggerTime(finalTimestamp, event.repeatInterval, event.repeatUnit)
+                            }
+                        }
+
+                        _noteReminderTime.value = finalTimestamp
+                        _noteRepeatInterval.value = event.repeatInterval
+                        _noteRepeatUnit.value = event.repeatUnit
+
                         val noteId = saveNoteInternal()
                         if (noteId != null) {
-                            if (event.timestamp != null) {
-                                scheduleReminderWork(noteId, event.timestamp)
+                            if (finalTimestamp != null) {
+                                scheduleReminderWork(noteId, finalTimestamp, event.repeatInterval, event.repeatUnit)
                                 _eventFlow.emit(UiEvent.ShowSnackbar("Reminder set successfully"))
                             } else {
                                 cancelReminderWork(noteId)

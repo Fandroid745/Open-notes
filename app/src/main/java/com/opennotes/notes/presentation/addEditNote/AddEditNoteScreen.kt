@@ -576,10 +576,10 @@ fun AddEditNoteScreen(
         }
 
         if (showInfoDialog) {
-            val timestamp = viewModel.noteTimestamp.value
+            val createdAt = viewModel.noteTimestamp.value
             val dateString =
-                remember(timestamp) {
-                    timestamp?.formatToDateTime() ?: "Not saved yet"
+                remember(createdAt) {
+                    createdAt?.formatToDateTime() ?: "Not saved yet"
                 }
             val wordCount =
                 remember(contentState.text) {
