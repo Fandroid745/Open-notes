@@ -111,5 +111,17 @@
     <string name="language_en">English</string>
     <string name="language_es">Spanish</string>
     <string name="language_fr">French</string>
+    <string name="repeat_does_not_repeat">Does not repeat</string>
+    <string name="repeat_daily">Daily</string>
+    <string name="repeat_weekly">Weekly</string>
+    <string name="repeat_monthly">Monthly</string>
+    <string name="repeat_custom">Custom...</string>
+    <string name="unit_minutes">Minutes</string>
+    <string name="unit_hours">Hours</string>
+    <string name="unit_days">Days</string>
+    <string name="unit_weeks">Weeks</string>
+    <string name="unit_months">Months</string>
+    <string name="unit_years">Years</string>
+    <string name="every">Every</string>
     <string name="navigate_desc">Navigate</string>
 </resources>

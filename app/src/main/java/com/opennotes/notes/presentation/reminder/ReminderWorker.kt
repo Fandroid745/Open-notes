@@ -26,22 +26,86 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.opennotes.notes.domain.usecase.NoteUseCases
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
-class ReminderWorker(
-    context: Context,
-    workerParams: WorkerParameters,
+@HiltWorker
+class ReminderWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val noteUseCases: NoteUseCases,
 ) : CoroutineWorker(context, workerParams) {
+
     override suspend fun doWork(): Result {
         val noteId = inputData.getInt("NOTE_ID", -1)
-        val noteTitle = inputData.getString("NOTE_TITLE") ?: "OpenNotes Reminder"
-        val noteContent = inputData.getString("NOTE_CONTENT") ?: ""
+        if (noteId == -1) return Result.failure()
 
-        if (noteId != -1) {
-            showNotification(noteId, noteTitle, noteContent)
+        val note = noteUseCases.getNote(noteId) ?: return Result.failure()
+
+        showNotification(noteId, note.title.ifBlank { "Reminder" }, note.content.ifBlank { "Open note to view details" })
+
+        // Handle Rescheduling if repetition is set
+        if (note.repeatInterval != null && note.repeatInterval > 0 && note.repeatUnit != null) {
+            val nextTime = calculateNextTriggerTime(note.reminderTime ?: System.currentTimeMillis(), note.repeatInterval, note.repeatUnit)
+            
+            // Update note in DB with next trigger time
+            val updatedNote = note.copy(reminderTime = nextTime)
+            noteUseCases.addNote(updatedNote)
+
+            // Schedule next work
+            scheduleNextReminder(nextTime, noteId, updatedNote.title, updatedNote.content)
+        } else {
+            // If no repeat, clear the reminderTime in DB so it doesn't show as active in UI
+            noteUseCases.addNote(note.copy(reminderTime = null))
         }
+
         return Result.success()
+    }
+
+    private fun calculateNextTriggerTime(currentTime: Long, interval: Long, unit: String): Long {
+        val calendar = Calendar.getInstance().apply { timeInMillis = currentTime }
+        when (unit) {
+            "MINUTES" -> calendar.add(Calendar.MINUTE, interval.toInt())
+            "HOURS" -> calendar.add(Calendar.HOUR_OF_DAY, interval.toInt())
+            "DAYS" -> calendar.add(Calendar.DAY_OF_YEAR, interval.toInt())
+            "WEEKS" -> calendar.add(Calendar.WEEK_OF_YEAR, interval.toInt())
+            "MONTHS" -> calendar.add(Calendar.MONTH, interval.toInt())
+            "YEARS" -> calendar.add(Calendar.YEAR, interval.toInt())
+            else -> calendar.add(Calendar.DAY_OF_YEAR, interval.toInt()) // Default to daily
+        }
+        return calendar.timeInMillis
+    }
+
+    private fun scheduleNextReminder(triggerTime: Long, noteId: Int, title: String, content: String) {
+        val delay = triggerTime - System.currentTimeMillis()
+        if (delay <= 0) return
+
+        val data = Data.Builder()
+            .putInt("NOTE_ID", noteId)
+            .putString("NOTE_TITLE", title.ifBlank { "Reminder" })
+            .putString("NOTE_CONTENT", content.ifBlank { "Open note to view details" })
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
+            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .setInputData(data)
+            .build()
+
+        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+            "reminder_work_$noteId",
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
     }
 
     private fun showNotification(

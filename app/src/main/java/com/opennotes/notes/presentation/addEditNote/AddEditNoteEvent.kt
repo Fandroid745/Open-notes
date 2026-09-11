@@ -49,5 +49,7 @@ sealed class AddEditNoteEvent {
 
     data class SetReminder(
         val timestamp: Long?,
+        val repeatInterval: Long? = null,
+        val repeatUnit: String? = null,
     ) : AddEditNoteEvent()
 }

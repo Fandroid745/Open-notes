@@ -83,6 +83,12 @@ class AddEditNoteViewModel
         private val _noteReminderTime = mutableStateOf<Long?>(null)
         val noteReminderTime: State<Long?> = _noteReminderTime
 
+        private val _noteRepeatInterval = mutableStateOf<Long?>(null)
+        val noteRepeatInterval: State<Long?> = _noteRepeatInterval
+
+        private val _noteRepeatUnit = mutableStateOf<String?>(null)
+        val noteRepeatUnit: State<String?> = _noteRepeatUnit
+
         private val _eventFlow = MutableSharedFlow<UiEvent>()
         val eventFlow = _eventFlow.asSharedFlow()
 
@@ -146,6 +152,8 @@ class AddEditNoteViewModel
                         timestamp = System.currentTimeMillis(),
                         isPinned = currentIsPinned,
                         reminderTime = noteReminderTime.value,
+                        repeatInterval = noteRepeatInterval.value,
+                        repeatUnit = noteRepeatUnit.value,
                         id = currentNoteId,
                     )
                 val insertedId = noteUseCases.addNote(note)
@@ -168,6 +176,8 @@ class AddEditNoteViewModel
                             currentIsPinned = note.isPinned
                             _noteTimestamp.value = note.timestamp
                             _noteReminderTime.value = note.reminderTime
+                            _noteRepeatInterval.value = note.repeatInterval
+                            _noteRepeatUnit.value = note.repeatUnit
                             if (savedStateHandle.get<String>("title") == null) {
                                 _noteTitle.value =
                                     noteTitle.value.copy(
@@ -275,6 +285,8 @@ class AddEditNoteViewModel
                 is AddEditNoteEvent.SetReminder -> {
                     viewModelScope.launch {
                         _noteReminderTime.value = event.timestamp
+                        _noteRepeatInterval.value = event.repeatInterval
+                        _noteRepeatUnit.value = event.repeatUnit
                         val noteId = saveNoteInternal()
                         if (noteId != null) {
                             if (event.timestamp != null) {

@@ -30,6 +30,8 @@ data class NoteEntity(
     val color: Int,
     val isPinned: Boolean = false,
     val reminderTime: Long? = null,
+    val repeatInterval: Long? = null,
+    val repeatUnit: String? = null,
     @PrimaryKey val id: Int? = null,
 ) {
     fun toNote(): Note =
@@ -40,6 +42,8 @@ data class NoteEntity(
             color = color,
             isPinned = isPinned,
             reminderTime = reminderTime,
+            repeatInterval = repeatInterval,
+            repeatUnit = repeatUnit,
             id = id,
         )
 }
@@ -52,5 +56,7 @@ fun Note.toNoteEntity(): NoteEntity =
         color = color,
         isPinned = isPinned,
         reminderTime = reminderTime,
+        repeatInterval = repeatInterval,
+        repeatUnit = repeatUnit,
         id = id,
     )

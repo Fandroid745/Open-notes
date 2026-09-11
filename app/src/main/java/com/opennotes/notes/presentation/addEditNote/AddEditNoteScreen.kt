@@ -265,22 +265,20 @@ fun AddEditNoteScreen(
                                 tint = contentColor,
                             )
                         }
-                        if (isEditingMode) {
-                            Spacer(modifier = Modifier.width(8.dp))
-                            FilledIconButton(
-                                onClick = { showReminderDialog = true },
-                                colors =
-                                    IconButtonDefaults.filledIconButtonColors(
-                                        containerColor = if (viewModel.noteReminderTime.value != null) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
-                                        contentColor = contentColor,
-                                    ),
-                            ) {
-                                Icon(
-                                    imageVector = if (viewModel.noteReminderTime.value != null) Icons.Default.NotificationsActive else Icons.Default.Notifications,
-                                    contentDescription = "Set reminder",
-                                    tint = contentColor,
-                                )
-                            }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        FilledIconButton(
+                            onClick = { showReminderDialog = true },
+                            colors =
+                                IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = if (viewModel.noteReminderTime.value != null) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
+                                    contentColor = contentColor,
+                                ),
+                        ) {
+                            Icon(
+                                imageVector = if (viewModel.noteReminderTime.value != null) Icons.Default.NotificationsActive else Icons.Default.Notifications,
+                                contentDescription = "Set reminder",
+                                tint = contentColor,
+                            )
                         }
                     },
                     colors =
@@ -608,21 +606,25 @@ fun AddEditNoteScreen(
                 },
                 confirmButton = {
                     TextButton(onClick = { showInfoDialog = false }) {
-                        Text(stringResource(R.string.ok), color = contentColor)
+                        Text(stringResource(R.string.ok), color = MaterialTheme.colorScheme.primary)
                     }
                 },
-                containerColor = backgroundColor,
-                titleContentColor = contentColor,
-                textContentColor = contentColor.copy(alpha = 0.8f),
+                containerColor = MaterialTheme.colorScheme.surface,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                textContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
             )
         }
         if (showReminderDialog) {
             ReminderDialog(
                 reminderTime = viewModel.noteReminderTime.value,
-                onReminderSet = { time -> viewModel.onEvent(AddEditNoteEvent.SetReminder(time)) },
+                repeatInterval = viewModel.noteRepeatInterval.value,
+                repeatUnit = viewModel.noteRepeatUnit.value,
+                onReminderSet = { time, interval, unit ->
+                    viewModel.onEvent(AddEditNoteEvent.SetReminder(time, interval, unit))
+                },
                 onDismiss = { showReminderDialog = false },
-                backgroundColor = backgroundColor,
-                contentColor = contentColor,
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
             )
         }
 

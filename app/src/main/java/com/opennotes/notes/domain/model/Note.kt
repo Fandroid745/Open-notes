@@ -28,6 +28,8 @@ data class Note(
     val color: Int,
     val isPinned: Boolean = false,
     val reminderTime: Long? = null,
+    val repeatInterval: Long? = null,
+    val repeatUnit: String? = null,
     val id: Int? = null,
 )
 
