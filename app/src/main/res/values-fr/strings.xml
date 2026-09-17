@@ -171,4 +171,5 @@
     <string name="delete_selected_desc">Supprimer sélectionné</string>
     <string name="keyboard_mode_desc">Passage au clavier</string>
     <string name="clock_mode_desc">Passage à l\'horloge</string>
+    <string name="settings_desc">Paramètres</string>
 </resources>
