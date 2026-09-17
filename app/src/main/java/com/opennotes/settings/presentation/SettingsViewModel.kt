@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.opennotes.R
 import com.opennotes.notes.domain.model.AppIcon
 import com.opennotes.notes.domain.usecase.NoteUseCases
 import com.opennotes.notes.domain.util.ExportResult
@@ -86,7 +87,8 @@ class SettingsViewModel
 
         sealed class UiEvent {
             data class ShowSnackbar(
-                val message: String,
+                val message: String? = null,
+                val messageResId: Int? = null,
             ) : UiEvent()
 
             data class OpenExportPicker(
@@ -153,13 +155,17 @@ class SettingsViewModel
         fun onBiometricAuthSuccess(enable: Boolean) {
             viewModelScope.launch {
                 dataStoreRepository.saveSettings(settings.value.copy(biometricLock = enable))
-                _uiEvent.send(UiEvent.ShowSnackbar(if (enable) "Biometric lock enabled" else "Biometric lock disabled"))
+                _uiEvent.send(
+                    UiEvent.ShowSnackbar(
+                        messageResId = if (enable) R.string.biometric_lock_enabled else R.string.biometric_lock_disabled
+                    )
+                )
             }
         }
 
         fun onBiometricAuthFailed() {
             viewModelScope.launch {
-                _uiEvent.send(UiEvent.ShowSnackbar("Biometric authentication cancelled or failed"))
+                _uiEvent.send(UiEvent.ShowSnackbar(messageResId = R.string.biometric_auth_failed))
             }
         }
 
@@ -200,9 +206,9 @@ class SettingsViewModel
                 when (val result = noteUseCases.exportNotes(fileUri.toString())) {
                     is ExportResult.Success ->
                         _uiEvent.send(
-                            UiEvent.ShowSnackbar("Notes exported successfully"),
+                            UiEvent.ShowSnackbar(messageResId = R.string.notes_exported_msg),
                         )
-                    is ExportResult.Error -> _uiEvent.send(UiEvent.ShowSnackbar(result.message))
+                    is ExportResult.Error -> _uiEvent.send(UiEvent.ShowSnackbar(message = result.message))
                 }
             }
         }
@@ -211,9 +217,9 @@ class SettingsViewModel
             viewModelScope.launch(Dispatchers.IO) {
                 when (val result = noteUseCases.importNotes(fileUri.toString())) {
                     is ImportResult.Success ->
-                        _uiEvent.send(UiEvent.ShowSnackbar("Notes imported"))
+                        _uiEvent.send(UiEvent.ShowSnackbar(messageResId = R.string.notes_imported_msg))
                     is ImportResult.Error ->
-                        _uiEvent.send(UiEvent.ShowSnackbar(result.message))
+                        _uiEvent.send(UiEvent.ShowSnackbar(message = result.message))
                 }
             }
         }

@@ -141,7 +141,7 @@ fun ColorPickerButton(
         if (isSelected) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = "Selected",
+                contentDescription = stringResource(R.string.selected_desc),
                 tint = if (color == Color.White) Color.Black else Color.White,
             )
         }

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.LocalContext
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
@@ -42,10 +43,12 @@ import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.opennotes.R
 import com.opennotes.notes.domain.model.Note
 
 @Composable
 fun ZeroState(widgetId: Int) {
+    val context = LocalContext.current
     Column(
         verticalAlignment = Alignment.CenterVertically,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,7 +60,7 @@ fun ZeroState(widgetId: Int) {
                 .clickable(actionStartActivity<NotesWidgetConfigActivity>()),
     ) {
         Text(
-            text = "Tap to select a note",
+            text = context.getString(R.string.widget_tap_to_select),
             style =
                 TextStyle(
                     color = GlanceTheme.colors.onSurfaceVariant,

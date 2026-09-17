@@ -123,8 +123,9 @@ fun SettingsScreen(
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 is SettingsViewModel.UiEvent.ShowSnackbar -> {
+                    val message = event.message ?: event.messageResId?.let { context.getString(it) } ?: ""
                     scope.launch {
-                        snackbarHostState.showSnackbar(message = event.message)
+                        snackbarHostState.showSnackbar(message = message)
                     }
                 }
 

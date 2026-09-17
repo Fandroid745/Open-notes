@@ -77,7 +77,7 @@ fun AppearanceSettingsScreen(
                     FilledTonalIconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back_desc),
                         )
                     }
                 },

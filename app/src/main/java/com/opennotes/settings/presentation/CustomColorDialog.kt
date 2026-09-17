@@ -85,7 +85,7 @@ fun CustomColorDialog(
                     },
                     label = { Text(stringResource(R.string.enter_hex_code)) },
                     prefix = { Text("#") },
-                    placeholder = { Text("RRGGBB") },
+                    placeholder = { Text(stringResource(R.string.hex_placeholder)) },
                     singleLine = true,
                     isError = hexText.isNotEmpty() && parsedColor == null,
                     supportingText = {

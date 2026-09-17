@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.opennotes.R
 import com.opennotes.settings.presentation.SettingsViewModel
 import java.io.File
 
@@ -290,7 +292,7 @@ fun MarkdownContent(
 ) {
     if (content.isEmpty()) {
         Text(
-            text = "Content",
+            text = stringResource(R.string.content_label),
             fontSize = fontSize,
             fontWeight = weight,
             color = Color.Gray,

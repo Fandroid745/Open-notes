@@ -214,7 +214,10 @@ fun AddEditNoteScreen(
             viewModel.eventFlow.collectLatest { event ->
                 when (event) {
                     is AddEditNoteViewModel.UiEvent.ShowSnackbar -> {
-                        snackbarHostState.showSnackbar(message = event.message)
+                        val message =
+                            event.message ?: event.messageResId?.let { context.getString(it) }
+                                ?: "Unknown error"
+                        snackbarHostState.showSnackbar(message = message)
                     }
 
                     is AddEditNoteViewModel.UiEvent.SavedNote -> {
@@ -238,7 +241,7 @@ fun AddEditNoteScreen(
                         IconButton(onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Go back",
+                                contentDescription = stringResource(R.string.go_back_desc),
                                 tint = contentColor,
                             )
                         }
@@ -261,7 +264,7 @@ fun AddEditNoteScreen(
                         ) {
                             Icon(
                                 imageVector = if (isPreviewMode) Icons.Default.Visibility else Icons.Default.Edit,
-                                contentDescription = if (isPreviewMode) "Reading mode" else "Editing mode",
+                                contentDescription = if (isPreviewMode) stringResource(R.string.reading_mode_desc) else stringResource(R.string.editing_mode_desc),
                                 tint = contentColor,
                             )
                         }
@@ -276,7 +279,7 @@ fun AddEditNoteScreen(
                         ) {
                             Icon(
                                 imageVector = if (viewModel.noteReminderTime.value != null) Icons.Default.NotificationsActive else Icons.Default.Notifications,
-                                contentDescription = "Set reminder",
+                                contentDescription = stringResource(R.string.set_reminder_desc),
                                 tint = contentColor,
                             )
                         }
@@ -315,7 +318,7 @@ fun AddEditNoteScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Palette,
-                                    contentDescription = "Change color",
+                                    contentDescription = stringResource(R.string.change_color_desc),
                                     tint = contentColor,
                                     modifier = Modifier.size(28.dp),
                                 )
@@ -334,7 +337,7 @@ fun AddEditNoteScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Image,
-                                    contentDescription = "Add image",
+                                    contentDescription = stringResource(R.string.add_image_desc),
                                     tint = contentColor,
                                     modifier = Modifier.size(28.dp),
                                 )
@@ -350,7 +353,7 @@ fun AddEditNoteScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.TextFields,
-                                        contentDescription = "Format text",
+                                        contentDescription = stringResource(R.string.format_text_desc),
                                         tint = contentColor,
                                         modifier = Modifier.size(28.dp),
                                     )
@@ -369,7 +372,7 @@ fun AddEditNoteScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.MoreVert,
-                                    contentDescription = "More options",
+                                    contentDescription = stringResource(R.string.more_options_desc),
                                     tint = contentColor,
                                     modifier = Modifier.size(28.dp),
                                 )
@@ -482,7 +485,7 @@ fun AddEditNoteScreen(
                 containerColor = backgroundColor,
             ) {
                 Text(
-                    text = "Color",
+                    text = stringResource(R.string.color_label),
                     style =
                         MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
@@ -564,7 +567,7 @@ fun AddEditNoteScreen(
                             if (isSelected) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(R.string.selected_desc),
                                     tint = contentColor,
                                     modifier = Modifier.size(20.dp),
                                 )
@@ -597,11 +600,11 @@ fun AddEditNoteScreen(
                 title = { Text(text = stringResource(R.string.note_info)) },
                 text = {
                     Column {
-                        Text(text = "Created: $dateString", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = stringResource(R.string.created_label, dateString), style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Words: $wordCount", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = stringResource(R.string.words_label, wordCount), style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = "Characters: $charCount", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = stringResource(R.string.characters_label, charCount), style = MaterialTheme.typography.bodyMedium)
                     }
                 },
                 confirmButton = {

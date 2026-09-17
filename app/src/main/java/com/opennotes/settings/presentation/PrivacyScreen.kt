@@ -78,8 +78,9 @@ fun PrivacySettingsScreen(
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 is SettingsViewModel.UiEvent.ShowSnackbar -> {
+                    val message = event.message ?: event.messageResId?.let { context.getString(it) } ?: ""
                     scope.launch {
-                        snackbarHostState.showSnackbar(message = event.message)
+                        snackbarHostState.showSnackbar(message = message)
                     }
                 }
 
@@ -165,7 +166,7 @@ fun PrivacySettingsScreen(
                     FilledTonalIconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back_desc),
                         )
                     }
                 },

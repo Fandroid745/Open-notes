@@ -39,6 +39,7 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.opennotes.R
 import com.opennotes.notes.presentation.MainActivity
 
 class AddNoteWidget : GlanceAppWidget() {
@@ -71,7 +72,7 @@ class AddNoteWidget : GlanceAppWidget() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Add Note",
+                        text = context.getString(R.string.add_note_label),
                         style =
                             TextStyle(
                                 fontSize = 22.sp,

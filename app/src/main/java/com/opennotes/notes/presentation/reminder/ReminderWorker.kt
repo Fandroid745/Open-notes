@@ -32,6 +32,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import com.opennotes.R
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -60,10 +61,9 @@ class ReminderWorker @AssistedInject constructor(
         if (noteId == -1) return Result.failure()
 
         return try {
-            // Smart fetch: ensure the note still exists before alerting
             val note = noteUseCases.getNote(noteId) ?: return Result.failure()
 
-            showNotification(noteId, note.title, note.content)
+            showNotification(noteId, note.title.ifBlank { applicationContext.getString(R.string.reminder_notification_title) }, note.content.ifBlank { applicationContext.getString(R.string.reminder_notification_content) })
 
             // Handle Rescheduling if repetition is set
             if (note.repeatInterval != null && note.repeatInterval > 0 && note.repeatUnit != null) {
@@ -139,8 +139,8 @@ class ReminderWorker @AssistedInject constructor(
 
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(com.opennotes.R.drawable.ic_launcher_monochrome)
-            .setContentTitle(title.ifBlank { "Reminder" })
-            .setContentText(content.ifBlank { "Open note to view details" })
+            .setContentTitle(title)
+            .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setDefaults(NotificationCompat.DEFAULT_ALL)

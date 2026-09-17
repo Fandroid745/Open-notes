@@ -89,10 +89,14 @@ fun BackupScreen(
         // fix deprecated key
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
-                is SettingsViewModel.UiEvent.ShowSnackbar ->
-                    scope.launch { snackbarHostState.showSnackbar(event.message) }
+                is SettingsViewModel.UiEvent.ShowSnackbar -> {
+                    val message = event.message ?: event.messageResId?.let { context.getString(it) } ?: ""
+                    scope.launch { snackbarHostState.showSnackbar(message) }
+                }
+
                 is SettingsViewModel.UiEvent.OpenExportPicker ->
                     exportFileLauncher.launch(event.suggestedFileName)
+
                 else -> Unit
             }
         }
@@ -115,7 +119,7 @@ fun BackupScreen(
                     FilledTonalIconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back_desc),
                         )
                     }
                 },

@@ -1,0 +1,32 @@
+
+.gradle/
+.idea/
+build/
+app/build/
+app/*/release/
+app/*/debug/
+local.properties
+
+# Compiled class files
+*.iml
+*.class
+
+
+*.apk
+*.ap_
+*.aab
+*.dex
+
+
+*.jks
+*.keystore
+
+
+!debug.keystore
+
+# Native build folders
+.cxx/
+.externalNativeBuild/
+
+# OS-specific files
+.DS_Store

@@ -122,14 +122,14 @@ fun ReminderDialog(
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    text = "Note Reminder",
+                    text = stringResource(R.string.note_reminder_dialog_title),
                     color = contentColor,
                 )
             },
             text = {
                 Column {
                     Text(
-                        text = "Reminder set for:\n$reminderString",
+                        text = stringResource(R.string.reminder_set_for_label, reminderString),
                         style = MaterialTheme.typography.bodyMedium,
                         color = contentColor,
                     )
@@ -137,7 +137,7 @@ fun ReminderDialog(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Repeat: $repeatText",
+                        text = stringResource(R.string.repeat_label_prefix, repeatText),
                         style = MaterialTheme.typography.bodySmall,
                         color = contentColor.copy(alpha = 0.6f),
                     )
@@ -276,7 +276,7 @@ fun ReminderDialog(
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    text = "Pick a date & time",
+                    text = stringResource(R.string.pick_date_time_title),
                     style = MaterialTheme.typography.headlineSmall,
                     color = contentColor,
                 )
@@ -641,9 +641,9 @@ fun ReminderDialog(
                                         },
                                     contentDescription =
                                         if (isClockMode) {
-                                            "Switch to keyboard"
+                                            stringResource(R.string.keyboard_mode_desc)
                                         } else {
-                                            "Switch to clock"
+                                            stringResource(R.string.clock_mode_desc)
                                         },
                                     tint = contentColor,
                                 )
@@ -706,7 +706,7 @@ private fun CustomRepeatDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Custom Repeat",
+                stringResource(R.string.custom_repeat_title),
                 color = contentColor,
             )
         },
@@ -722,7 +722,7 @@ private fun CustomRepeatDialog(
                         }
                     },
                     label = {
-                        Text("Interval")
+                        Text(stringResource(R.string.interval_label))
                     },
                     keyboardOptions =
                         KeyboardOptions(
@@ -895,7 +895,7 @@ private fun ReminderDropdownField(
 
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = null,
+                contentDescription = stringResource(R.string.dropdown_desc),
                 tint = contentColor,
             )
         }
