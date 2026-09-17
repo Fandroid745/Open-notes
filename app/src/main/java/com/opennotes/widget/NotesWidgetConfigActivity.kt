@@ -54,6 +54,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,6 +63,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.opennotes.R
 import com.opennotes.notes.domain.usecase.NoteUseCases
 import com.opennotes.settings.presentation.SettingsViewModel
 import com.opennotes.ui.theme.OpenNotesTheme
@@ -103,7 +105,7 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                         LargeTopAppBar(
                             title = {
                                 Text(
-                                    "Select a note",
+                                    stringResource(R.string.widget_select_a_note),
                                     style =
                                         MaterialTheme.typography.headlineLarge.copy(
                                             fontWeight = FontWeight.Bold,
@@ -143,7 +145,7 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                     Text(
-                                        text = "No notes found",
+                                        text = stringResource(R.string.widget_no_notes_found),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )

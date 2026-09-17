@@ -95,9 +95,9 @@ fun SettingsSwitch(
         colors =
             SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.primary,
-                uncheckedThumbColor = MaterialTheme.colorScheme.surface,
+                uncheckedThumbColor = MaterialTheme.colorScheme.outline,
                 checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             ),
     )
 }
@@ -123,8 +123,9 @@ fun SettingsScreen(
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 is SettingsViewModel.UiEvent.ShowSnackbar -> {
+                    val message = event.message ?: event.messageResId?.let { context.getString(it) } ?: ""
                     scope.launch {
-                        snackbarHostState.showSnackbar(message = event.message)
+                        snackbarHostState.showSnackbar(message = message)
                     }
                 }
 

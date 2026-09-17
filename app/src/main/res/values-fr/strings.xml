@@ -77,8 +77,8 @@
     <string name="theme_dark">Sombre</string>
     <string name="navigate_desc">Naviguer</string>
     <string name="help_translate">Aide traduire</string>
-    <string name="help_translate_description">Traduire Open Notes dans votre langue</string>
-    <string name="settings_behavior_title">Comportement</string>
+    <string name="help_translate_description">Translate Open Notes dans votre langue</string>
+    <string name="settings_behavior_title">Behavior</string>
     <string name="settings_behavior_subtitle">Mode de lecture, mode Markdown</string>
     <string name="behavior_title">Behavior</string>
     <string name="open_in_reading_mode_title">Mode de lecture</string>

@@ -17,40 +17,99 @@
   -->
 
 <resources>
+
+    <!-- General / App Identity -->
     <string name="app_name">Open Notes</string>
-    <string name="error_file_is_empty">File is empty</string>
-    <string name="error_invalid_json">Invalid JSON format</string>
-    <string name="error_no_notes_found">No notes found in file</string>
-    <string name="error_no_valid_notes">No valid notes found</string>
-    <string name="error_invalid_note">Either a title or content must be provided</string>
+    <string name="new_note">New Note</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="remove">Remove</string>
+    <string name="change">Change</string>
+    <string name="save">Save</string>
+    <string name="switch_on">On</string>
+    <string name="switch_off">Off</string>
+
+    <!-- Authentication & Privacy -->
     <string name="unlock_title">Unlock OpenNotes</string>
     <string name="unlock_subtitle">Confirm your identity to access your notes</string>
+    <string name="biometric_enable_title">Enable biometric lock</string>
+    <string name="biometric_disable_title">Disable biometric lock</string>
+    <string name="biometric_enable_subtitle">Confirm your identity to enable app lock</string>
+    <string name="biometric_disable_subtitle">Confirm your identity to disable app lock</string>
+    <string name="privacy_title">Privacy and Security</string>
+    <string name="biometric_lock_title">Biometric Lock</string>
+    <string name="biometric_lock_subtitle_enabled">Fingerprint required when enabled</string>
+    <string name="biometric_lock_subtitle_disabled">Require fingerprint to unlock app</string>
+    <string name="secure_screen_title">Secure Screen</string>
+    <string name="secure_screen_subtitle">Hide content in Recents and block screenshots</string>
+    <string name="biometric_lock_enabled">Biometric lock enabled</string>
+    <string name="biometric_lock_disabled">Biometric lock disabled</string>
+    <string name="biometric_auth_failed">Biometric authentication cancelled or failed</string>
+
+    <!-- Notes List -->
     <string name="sort_by">Sort by</string>
     <string name="sort_newest_first">Newest first</string>
     <string name="sort_oldest_first">Oldest first</string>
     <string name="sort_title_az">Title A–Z</string>
     <string name="sort_title_za">Title Z–A</string>
+    <string name="search_notes">Search Notes</string>
+    <string name="notes_layout_toggle">Toggle layout</string>
+    <string name="pinned_header">PINNED</string>
+    <string name="others_header">OTHERS</string>
+    <string name="undo_label">Undo</string>
+    <string name="note_deleted_msg">Note deleted</string>
+    <string name="notes_deleted_msg">%1$d notes deleted</string>
+    <string name="delete_note_title">Delete note</string>
+    <string name="delete_notes_title">Delete %1$d notes</string>
+    <string name="delete_note_confirm">Are you sure you want to delete this note?</string>
+    <string name="delete_notes_confirm">Are you sure you want to delete these notes?</string>
+
+    <!-- Note Editor -->
+    <string name="note_info">Note info</string>
+    <string name="share_note">Share note</string>
+    <string name="enter_title_hint">Enter title ....</string>
+    <string name="enter_content_hint">Enter content....</string>
+    <string name="title_label">Title</string>
+    <string name="content_label">Content</string>
+    <string name="no_title_msg">No title</string>
+    <string name="no_content_msg">No content to preview</string>
+    <string name="not_saved_yet">Not saved yet</string>
+    <string name="created_label">Created: %1$s</string>
+    <string name="words_label">Words: %1$s</string>
+    <string name="characters_label">Characters: %1$s</string>
+
+    <!-- Reminders & Dates -->
+    <string name="select_time">Select time</string>
+    <string name="custom_repeat_title">Custom Repeat</string>
+    <string name="interval_label">Interval</string>
+    <string name="note_reminder_dialog_title">Note Reminder</string>
+    <string name="reminder_set_for_label">Reminder set for:\n%1$s</string>
+    <string name="repeat_label_prefix">Repeat: %1$s</string>
+    <string name="pick_date_time_title">Pick a date &amp; time</string>
+    <string name="reminder_notification_title">Reminder</string>
+    <string name="reminder_notification_content">Open note to view details</string>
+    <string name="urgent_reminders_desc">Urgent note reminders</string>
+    <string name="reminder_set_successfully">Reminder set successfully</string>
+    <string name="reminder_removed">Reminder removed</string>
+    <string name="repeat_does_not_repeat">Does not repeat</string>
+    <string name="repeat_daily">Daily</string>
+    <string name="repeat_weekly">Weekly</string>
+    <string name="repeat_monthly">Monthly</string>
+    <string name="repeat_custom">Custom...</string>
+    <string name="unit_minutes">Minutes</string>
+    <string name="unit_hours">Hours</string>
+    <string name="unit_days">Days</string>
+    <string name="unit_weeks">Weeks</string>
+    <string name="unit_months">Months</string>
+    <string name="unit_years">Years</string>
+    <string name="every">Every</string>
+
+    <!-- Settings -->
     <string name="app_icon_change_title">Change App Icon?</string>
     <string name="app_icon_change_message">Changing the app icon requires the app to restart. Your home screen may momentarily refresh. Do you wish to proceed?</string>
     <string name="app_icon_restart">Restart</string>
     <string name="app_icon_cancel">Cancel</string>
-    <string name="support_github_sponsors">Support me on Github Sponsors</string>
-    <string name="support_github_description">Monthly or one-time-directly funds development</string>
-    <string name="help_translate">Help translate</string>
-    <string name="help_translate_description">Translate Open Notes into your language</string>
-    <string name="license_label">License</string>
-    <string name="license_gpl">GPL-3.0 License</string>
-    <string name="delete">Delete</string>
-    <string name="cancel">Cancel</string>
-    <string name="new_note">New Note</string>
-    <string name="search_notes">Search Notes</string>
-    <string name="note_info">Note info</string>
-    <string name="share_note">Share note</string>
-    <string name="ok">OK</string>
-    <string name="remove">Remove</string>
-    <string name="change">Change</string>
-    <string name="save">Save</string>
-    <string name="select_time">Select time</string>
     <string name="settings_title">Settings</string>
     <string name="settings_backup_restore_title">Backup and Restore</string>
     <string name="settings_backup_restore_subtitle">Export and import your notes</string>
@@ -62,13 +121,6 @@
     <string name="settings_privacy_subtitle">Biometric lock, Secure Screen</string>
     <string name="settings_about_title">About</string>
     <string name="settings_about_subtitle">Version %1$s</string>
-    <string name="error_biometric_unavailable">Biometric authentication is not available</string>
-    <string name="biometric_enable_title">Enable biometric lock</string>
-    <string name="biometric_disable_title">Disable biometric lock</string>
-    <string name="biometric_enable_subtitle">Confirm your identity to enable app lock</string>
-    <string name="biometric_disable_subtitle">Confirm your identity to disable app lock</string>
-    <string name="switch_on">On</string>
-    <string name="switch_off">Off</string>
     <string name="appearance_title">Appearance</string>
     <string name="behavior_title">Behavior</string>
     <string name="open_in_reading_mode_title">Reading mode</string>
@@ -85,14 +137,9 @@
     <string name="export_notes_subtitle">Save your notes to a ZIP archive</string>
     <string name="import_notes_title">Import Notes</string>
     <string name="import_notes_subtitle">Load notes from a JSON or ZIP backup</string>
+    <string name="notes_exported_msg">Notes exported successfully</string>
+    <string name="notes_imported_msg">Notes imported</string>
     <string name="about_title">About</string>
-    <string name="github_content_desc">GitHub</string>
-    <string name="privacy_title">Privacy and Security</string>
-    <string name="biometric_lock_title">Biometric Lock</string>
-    <string name="biometric_lock_subtitle_enabled">Fingerprint required when enabled</string>
-    <string name="biometric_lock_subtitle_disabled">Require fingerprint to unlock app</string>
-    <string name="secure_screen_title">Secure Screen</string>
-    <string name="secure_screen_subtitle">Hide content in Recents and block screenshots</string>
     <string name="color_scheme_title">Color Scheme</string>
     <string name="dynamic_label">Dynamic</string>
     <string name="color_label">Color</string>
@@ -103,25 +150,64 @@
     <string name="theme_dark">Dark</string>
     <string name="custom_color">Custom</string>
     <string name="enter_hex_code">Enter hex code (e.g. #FF5733)</string>
-    <string name="invalid_hex_code">Invalid hex code</string>
-    <string name="notes_layout_toggle">Toggle layout</string>
+    <string name="hex_placeholder">RRGGBB</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_language_subtitle">Change app language</string>
     <string name="language_default">System Default</string>
     <string name="language_en">English</string>
     <string name="language_es">Spanish</string>
     <string name="language_fr">French</string>
-    <string name="repeat_does_not_repeat">Does not repeat</string>
-    <string name="repeat_daily">Daily</string>
-    <string name="repeat_weekly">Weekly</string>
-    <string name="repeat_monthly">Monthly</string>
-    <string name="repeat_custom">Custom...</string>
-    <string name="unit_minutes">Minutes</string>
-    <string name="unit_hours">Hours</string>
-    <string name="unit_days">Days</string>
-    <string name="unit_weeks">Weeks</string>
-    <string name="unit_months">Months</string>
-    <string name="unit_years">Years</string>
-    <string name="every">Every</string>
+
+    <!-- Widgets -->
+    <string name="widget_tap_to_select">Tap to select a note</string>
+    <string name="widget_select_a_note">Select a note</string>
+    <string name="widget_no_notes_found">No notes found</string>
+    <string name="widget_no_content">No content</string>
+    <string name="add_note_label">Add Note</string>
+
+    <!-- Support & License -->
+    <string name="support_github_sponsors">Support me on Github Sponsors</string>
+    <string name="support_github_description">Monthly or one-time-directly funds development</string>
+    <string name="help_translate">Help translate</string>
+    <string name="help_translate_description">Translate Open Notes into your language</string>
+    <string name="license_label">License</string>
+    <string name="license_gpl">GPL-3.0 License</string>
+
+    <!-- Error Messages -->
+    <string name="error_file_is_empty">File is empty</string>
+    <string name="error_invalid_json">Invalid JSON format</string>
+    <string name="error_no_notes_found">No notes found in file</string>
+    <string name="error_no_valid_notes">No valid notes found</string>
+    <string name="error_invalid_note">Either a title or content must be provided</string>
+    <string name="error_biometric_unavailable">Biometric authentication is not available</string>
+    <string name="invalid_hex_code">Invalid hex code</string>
+    <string name="error_save_note">Couldn\'t save note</string>
+    <string name="error_insert_image">Failed to insert image</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="back_desc">Back</string>
+    <string name="go_back_desc">Go back</string>
+    <string name="reading_mode_desc">Reading mode</string>
+    <string name="editing_mode_desc">Editing mode</string>
+    <string name="expand_desc">Expand</string>
+    <string name="selected_desc">Selected</string>
+    <string name="dropdown_desc">Dropdown</string>
+    <string name="new_note_desc">New note</string>
+    <string name="select_all_desc">Select all</string>
+    <string name="toggle_pin_desc">Toggle Pin</string>
+    <string name="sort_notes_desc">Sort notes</string>
+    <string name="settings_desc">Settings</string>
+    <string name="set_reminder_desc">Set reminder</string>
+    <string name="change_color_desc">Change color</string>
+    <string name="add_image_desc">Add image</string>
+    <string name="format_text_desc">Format text</string>
+    <string name="more_options_desc">More options</string>
+    <string name="note_image_desc">Note Image</string>
+    <string name="clear_selection_desc">Clear selection</string>
+    <string name="delete_selected_desc">Delete selected</string>
+    <string name="keyboard_mode_desc">Switch to keyboard</string>
+    <string name="clock_mode_desc">Switch to clock</string>
     <string name="navigate_desc">Navigate</string>
+    <string name="github_content_desc">GitHub</string>
+
 </resources>

@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +68,7 @@ fun NotesScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.value
+    val context = LocalContext.current
     val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
     val haptic = LocalHapticFeedback.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -83,7 +85,7 @@ fun NotesScreen(
             onDismissRequest = { notesPendingDeleteState.value = null },
             title = {
                 Text(
-                    text = if (notesToDelete.size == 1) "Delete note" else "Delete ${notesToDelete.size} notes",
+                    text = if (notesToDelete.size == 1) stringResource(R.string.delete_note_title) else stringResource(R.string.delete_notes_title, notesToDelete.size),
                     fontWeight = FontWeight.SemiBold,
                 )
             },
@@ -91,9 +93,9 @@ fun NotesScreen(
                 Text(
                     text =
                         if (notesToDelete.size == 1) {
-                            "Are you sure you want to delete this note?"
+                            stringResource(R.string.delete_note_confirm)
                         } else {
-                            "Are you sure you want to delete these notes?"
+                            stringResource(R.string.delete_notes_confirm)
                         },
                 )
             },
@@ -105,8 +107,8 @@ fun NotesScreen(
                         scope.launch {
                             val result =
                                 snackbarHostState.showSnackbar(
-                                    message = if (notesToDelete.size == 1) "Note deleted" else "${notesToDelete.size} notes deleted",
-                                    actionLabel = "Undo",
+                                    message = if (notesToDelete.size == 1) context.getString(R.string.note_deleted_msg) else context.getString(R.string.notes_deleted_msg, notesToDelete.size),
+                                    actionLabel = context.getString(R.string.undo_label),
                                     duration = SnackbarDuration.Short,
                                 )
                             if (result == SnackbarResult.ActionPerformed) {
@@ -139,7 +141,7 @@ fun NotesScreen(
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "New note",
+                        contentDescription = stringResource(R.string.new_note_desc),
                     )
                 },
                 text = {
@@ -178,7 +180,7 @@ fun NotesScreen(
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 viewModel.onEvent(NotesEvent.ClearSelection)
                             }) {
-                                Icon(Icons.Default.Close, "Clear selection")
+                                Icon(Icons.Default.Close, stringResource(R.string.clear_selection_desc))
                             }
                             Text(
                                 text = "${state.selectedNotes.size}",
@@ -191,7 +193,7 @@ fun NotesScreen(
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.SelectAll,
-                                    contentDescription = "Select all",
+                                    contentDescription = stringResource(R.string.select_all_desc),
                                 )
                             }
                             val allPinned = state.selectedNotes.all { it.isPinned }
@@ -201,14 +203,14 @@ fun NotesScreen(
                             }) {
                                 Icon(
                                     imageVector = if (allPinned) Icons.Outlined.PushPin else Icons.Filled.PushPin,
-                                    contentDescription = "Toggle Pin",
+                                    contentDescription = stringResource(R.string.toggle_pin_desc),
                                 )
                             }
                             IconButton(onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 notesPendingDeleteState.value = state.selectedNotes
                             }) {
-                                Icon(Icons.Default.Delete, "Delete selected")
+                                Icon(Icons.Default.Delete, stringResource(R.string.delete_selected_desc))
                             }
                         }
                     } else {
@@ -254,14 +256,14 @@ fun NotesScreen(
                                     IconButton(onClick = { showSortSheet = true }) {
                                         Icon(
                                             imageVector = Icons.Default.SwapVert,
-                                            contentDescription = "Sort notes",
+                                            contentDescription = stringResource(R.string.sort_notes_desc),
                                             modifier = Modifier.size(25.dp),
                                         )
                                     }
                                     IconButton(onClick = { navController.navigate(Screen.SettingsScreen.route) }) {
                                         Icon(
                                             imageVector = Icons.Default.Settings,
-                                            contentDescription = "Settings",
+                                            contentDescription = stringResource(R.string.settings_desc),
                                             modifier = Modifier.size(25.dp),
                                         )
                                     }
@@ -302,7 +304,7 @@ fun NotesScreen(
                     if (pinnedNotes.isNotEmpty()) {
                         item(span = StaggeredGridItemSpan.FullLine) {
                             Text(
-                                text = "PINNED",
+                                text = stringResource(R.string.pinned_header),
                                 style = MaterialTheme.typography.labelMedium,
                                 modifier = Modifier.padding(bottom = 8.dp, start = 8.dp),
                             )
@@ -339,7 +341,7 @@ fun NotesScreen(
                         if (pinnedNotes.isNotEmpty()) {
                             item(span = StaggeredGridItemSpan.FullLine) {
                                 Text(
-                                    text = "OTHERS",
+                                    text = stringResource(R.string.others_header),
                                     style = MaterialTheme.typography.labelMedium,
                                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, start = 8.dp),
                                 )

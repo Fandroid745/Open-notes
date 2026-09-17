@@ -20,6 +20,6 @@ package com.opennotes.notes.presentation.addEditNote
 
 data class NoteTextFieldState(
     val text: String = "",
-    val hint: String = "",
+    val hint: Int? = null,
     val isHintVisible: Boolean = true,
 )

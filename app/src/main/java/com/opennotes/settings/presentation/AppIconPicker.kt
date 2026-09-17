@@ -78,7 +78,7 @@ fun AppIconPicker(
             trailing = {
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Expand",
+                    contentDescription = stringResource(R.string.expand_desc),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
@@ -123,7 +123,7 @@ fun AppIconPicker(
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Selected",
+                                contentDescription = stringResource(R.string.selected_desc),
                                 tint = color.contentColorForBackground(),
                             )
                         }

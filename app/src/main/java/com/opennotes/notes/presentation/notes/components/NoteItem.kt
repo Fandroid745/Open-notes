@@ -43,9 +43,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.opennotes.R
 import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownText
 import com.opennotes.util.contentColorForBackground
@@ -145,7 +147,7 @@ fun NoteItem(
             if (isSelected) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = "Selected",
+                    contentDescription = stringResource(R.string.selected_desc),
                     tint = textColor,
                     modifier =
                         Modifier
