@@ -97,7 +97,7 @@ class AddEditNoteViewModel
         private var currentNoteId: Int? = null
         private var currentIsPinned: Boolean = false
         private var autoSaveJob: Job? = null
-        
+
         // Track if reminder was manually changed in this session to prevent overwrite from DB fetch
         private var isReminderDirty = false
 
@@ -196,7 +196,7 @@ class AddEditNoteViewModel
                             reminderTime = dbNote.reminderTime
                             repeatInterval = dbNote.repeatInterval
                             repeatUnit = dbNote.repeatUnit
-                            
+
                             // Update UI state to match DB
                             _noteReminderTime.value = reminderTime
                             _noteRepeatInterval.value = repeatInterval
@@ -223,7 +223,7 @@ class AddEditNoteViewModel
                     currentNoteId = insertedId
                     _noteTimestamp.value = createdAt
                 }
-                
+
                 isReminderDirty = false
                 return insertedId
             } catch (e: Exception) {
@@ -365,9 +365,9 @@ class AddEditNoteViewModel
                         _noteReminderTime.value = finalTimestamp
                         _noteRepeatInterval.value = event.repeatInterval
                         _noteRepeatUnit.value = event.repeatUnit
-                        
+
                         isReminderDirty = true
-                        
+
                         val noteId = saveNoteInternal()
                         if (noteId != null) {
                             if (finalTimestamp != null) {

@@ -159,13 +159,17 @@ fun NotesScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(top = 12.dp),
+                        .consumeWindowInsets(paddingValues)
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+                        ),
             ) {
                 Column(
                     modifier =
                         Modifier
                             .fillMaxWidth()
+                            .padding(top = paddingValues.calculateTopPadding())
+                            .padding(top = 12.dp)
                             .padding(horizontal = 16.dp),
                 ) {
                     if (state.selectedNotes.isNotEmpty()) {
@@ -297,7 +301,12 @@ fun NotesScreen(
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Fixed(if (settings.notesLayout == NotesLayout.GRID) 2 else 1),
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    contentPadding =
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = paddingValues.calculateBottomPadding() + 80.dp,
+                        ),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalItemSpacing = 8.dp,
                 ) {
