@@ -25,7 +25,11 @@ object ReminderUtils {
      * Calculates the next trigger time based on the repetition rule.
      * If the calculated time is in the past, it loops until a future time is found (Catch-up logic).
      */
-    fun calculateNextTriggerTime(currentTime: Long, interval: Long, unit: String): Long {
+    fun calculateNextTriggerTime(
+        currentTime: Long,
+        interval: Long,
+        unit: String,
+    ): Long {
         val calendar = Calendar.getInstance().apply { timeInMillis = currentTime }
         val now = System.currentTimeMillis()
 

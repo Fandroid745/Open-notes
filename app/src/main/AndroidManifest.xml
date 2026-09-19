@@ -45,7 +45,8 @@
             android:name="com.opennotes.notes.presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.OpenNotes">
+            android:theme="@style/Theme.OpenNotes"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

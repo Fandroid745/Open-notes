@@ -157,8 +157,8 @@ class SettingsViewModel
                 dataStoreRepository.saveSettings(settings.value.copy(biometricLock = enable))
                 _uiEvent.send(
                     UiEvent.ShowSnackbar(
-                        messageResId = if (enable) R.string.biometric_lock_enabled else R.string.biometric_lock_disabled
-                    )
+                        messageResId = if (enable) R.string.biometric_lock_enabled else R.string.biometric_lock_disabled,
+                    ),
                 )
             }
         }

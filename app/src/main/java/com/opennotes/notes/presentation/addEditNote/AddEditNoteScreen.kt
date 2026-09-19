@@ -32,20 +32,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -65,34 +52,8 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.ripple
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -234,6 +195,7 @@ fun AddEditNoteScreen(
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
+            containerColor = backgroundColor,
             topBar = {
                 TopAppBar(
                     title = { Text("") },
@@ -286,13 +248,14 @@ fun AddEditNoteScreen(
                     },
                     colors =
                         TopAppBarDefaults.topAppBarColors(
-                            containerColor = backgroundColor,
+                            containerColor = Color.Transparent,
+                            scrolledContainerColor = Color.Transparent,
                         ),
                 )
             },
             bottomBar = {
                 Column(
-                    modifier = Modifier.background(backgroundColor),
+                    modifier = Modifier.background(Color.Transparent),
                 ) {
                     if (showFormatToolbar && isEditingMode && markdownEnabled) {
                         FormatToolbar(
@@ -304,7 +267,7 @@ fun AddEditNoteScreen(
                         )
                     }
                     BottomAppBar(
-                        containerColor = backgroundColor,
+                        containerColor = Color.Transparent,
                         contentColor = contentColor,
                     ) {
                         if (isEditingMode) {
@@ -433,7 +396,7 @@ fun AddEditNoteScreen(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(backgroundColor)
+                            .background(Color.Transparent)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
@@ -443,7 +406,9 @@ fun AddEditNoteScreen(
                                 }
                             }.padding(paddingValues)
                             .consumeWindowInsets(paddingValues)
-                            .imePadding()
+                            .windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+                            ).imePadding()
                             .padding(16.dp),
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))

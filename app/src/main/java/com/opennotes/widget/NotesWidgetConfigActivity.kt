@@ -23,11 +23,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -78,6 +80,7 @@ class NotesWidgetConfigActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         val appWidgetId =
@@ -114,8 +117,8 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                             },
                             colors =
                                 TopAppBarDefaults.largeTopAppBarColors(
-                                    containerColor = MaterialTheme.colorScheme.background,
-                                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                                    containerColor = Color.Transparent,
+                                    scrolledContainerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
                                 ),
                         )
                     },
@@ -157,10 +160,15 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .padding(paddingValues)
-                                        .padding(horizontal = 16.dp),
+                                        .consumeWindowInsets(paddingValues),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(vertical = 16.dp),
+                                contentPadding =
+                                    PaddingValues(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = paddingValues.calculateTopPadding() + 16.dp,
+                                        bottom = paddingValues.calculateBottomPadding() + 16.dp,
+                                    ),
                             ) {
                                 items(notes!!) { note ->
                                     Card(
