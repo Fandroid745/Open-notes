@@ -19,13 +19,17 @@
 package com.opennotes.settings.presentation
 
 import android.net.Uri
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.opennotes.R
 import com.opennotes.notes.domain.model.AppIcon
 import com.opennotes.notes.domain.usecase.NoteUseCases
 import com.opennotes.notes.domain.util.ExportResult
 import com.opennotes.notes.domain.util.ImportResult
 import com.opennotes.settings.data.repository.DataStoreRepository
+import com.opennotes.settings.domain.model.NotesLayout
 import com.opennotes.settings.domain.model.Settings
 import com.opennotes.settings.domain.model.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,7 +87,8 @@ class SettingsViewModel
 
         sealed class UiEvent {
             data class ShowSnackbar(
-                val message: String,
+                val message: String? = null,
+                val messageResId: Int? = null,
             ) : UiEvent()
 
             data class OpenExportPicker(
@@ -104,6 +109,20 @@ class SettingsViewModel
 
         fun updateBlackTheme(blackTheme: Boolean) {
             val newSettings = settings.value.copy(blackTheme = blackTheme)
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(newSettings)
+            }
+        }
+
+        fun updateOpenInReadingMode(openInReadingMode: Boolean) {
+            val newSettings = settings.value.copy(openInReadingMode = openInReadingMode)
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(newSettings)
+            }
+        }
+
+        fun updateMarkdownEnabled(markdownEnabled: Boolean) {
+            val newSettings = settings.value.copy(markdownEnabled = markdownEnabled)
             viewModelScope.launch {
                 dataStoreRepository.saveSettings(newSettings)
             }
@@ -136,13 +155,17 @@ class SettingsViewModel
         fun onBiometricAuthSuccess(enable: Boolean) {
             viewModelScope.launch {
                 dataStoreRepository.saveSettings(settings.value.copy(biometricLock = enable))
-                _uiEvent.send(UiEvent.ShowSnackbar(if (enable) "Biometric lock enabled" else "Biometric lock disabled"))
+                _uiEvent.send(
+                    UiEvent.ShowSnackbar(
+                        messageResId = if (enable) R.string.biometric_lock_enabled else R.string.biometric_lock_disabled,
+                    ),
+                )
             }
         }
 
         fun onBiometricAuthFailed() {
             viewModelScope.launch {
-                _uiEvent.send(UiEvent.ShowSnackbar("Biometric authentication cancelled or failed"))
+                _uiEvent.send(UiEvent.ShowSnackbar(messageResId = R.string.biometric_auth_failed))
             }
         }
 
@@ -151,6 +174,23 @@ class SettingsViewModel
             viewModelScope.launch {
                 dataStoreRepository.saveSettings(newSettings)
             }
+        }
+
+        fun updateNotesLayout(layout: NotesLayout) {
+            val newSettings = settings.value.copy(notesLayout = layout)
+            viewModelScope.launch {
+                dataStoreRepository.saveSettings(newSettings)
+            }
+        }
+
+        fun updateLanguage(languageTag: String) {
+            val appLocale: LocaleListCompat =
+                if (languageTag.isEmpty()) {
+                    LocaleListCompat.getEmptyLocaleList()
+                } else {
+                    LocaleListCompat.forLanguageTags(languageTag)
+                }
+            AppCompatDelegate.setApplicationLocales(appLocale)
         }
 
         fun onExportClick() {
@@ -166,9 +206,9 @@ class SettingsViewModel
                 when (val result = noteUseCases.exportNotes(fileUri.toString())) {
                     is ExportResult.Success ->
                         _uiEvent.send(
-                            UiEvent.ShowSnackbar("Notes exported successfully"),
+                            UiEvent.ShowSnackbar(messageResId = R.string.notes_exported_msg),
                         )
-                    is ExportResult.Error -> _uiEvent.send(UiEvent.ShowSnackbar(result.message))
+                    is ExportResult.Error -> _uiEvent.send(UiEvent.ShowSnackbar(message = result.message))
                 }
             }
         }
@@ -177,9 +217,9 @@ class SettingsViewModel
             viewModelScope.launch(Dispatchers.IO) {
                 when (val result = noteUseCases.importNotes(fileUri.toString())) {
                     is ImportResult.Success ->
-                        _uiEvent.send(UiEvent.ShowSnackbar("Notes imported"))
+                        _uiEvent.send(UiEvent.ShowSnackbar(messageResId = R.string.notes_imported_msg))
                     is ImportResult.Error ->
-                        _uiEvent.send(UiEvent.ShowSnackbar(result.message))
+                        _uiEvent.send(UiEvent.ShowSnackbar(message = result.message))
                 }
             }
         }

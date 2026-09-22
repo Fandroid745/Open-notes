@@ -47,6 +47,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import com.opennotes.R
 import com.opennotes.notes.presentation.addEditNote.components.markdown.*
 import java.io.File
 
@@ -92,9 +93,10 @@ fun MarkdownWidgetContent(
     fontSize: TextUnit,
     onContentChange: (String) -> Unit,
 ) {
+    val context = LocalContext.current
     if (content.isEmpty()) {
         Text(
-            text = "No content",
+            text = context.getString(R.string.widget_no_content),
             style = TextStyle(color = color, fontSize = fontSize),
         )
         return

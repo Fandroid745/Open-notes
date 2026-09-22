@@ -1,25 +1,5 @@
-/*
- *
- *  *  Copyright (c) 2026 Dhanush Sugganahalli <dhanush41230@gmail.com>
- *  *
- *  *  This program is free software; you can redistribute it and/or modify it under
- *  *  the terms of the GNU General Public License as published by the Free Software
- *  *  Foundation; either version 3 of the License, or (at your option) any later
- *  *  version.
- *  *
- *  *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
- *  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- *  *  PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *  *
- *  *  You should have received a copy of the GNU General Public License along with
- *  *  this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
 package com.opennotes.notes.presentation.addEditNote.components
 
-import com.opennotes.R
-import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -28,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -38,28 +19,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.opennotes.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderDialog(
     reminderTime: Long?,
-    onReminderSet: (Long?) -> Unit,
+    repeatInterval: Long?,
+    repeatUnit: String?,
+    onReminderSet: (Long?, Long?, String?) -> Unit,
     onDismiss: () -> Unit,
     backgroundColor: Color,
     contentColor: Color,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+
     var hasNotificationPermission by remember {
         mutableStateOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED
             } else {
                 true
             },
@@ -71,49 +62,98 @@ fun ReminderDialog(
             contract = ActivityResultContracts.RequestPermission(),
         ) { isGranted ->
             hasNotificationPermission = isGranted
+
             if (!isGranted) {
                 onDismiss()
             }
         }
 
-    // Request permission immediately if not granted
     LaunchedEffect(hasNotificationPermission) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !hasNotificationPermission) {
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !hasNotificationPermission
+        ) {
             permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !hasNotificationPermission) {
-        // Wait for permission check
+    if (
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+        !hasNotificationPermission
+    ) {
         return
     }
 
-    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
-    var showM3ReminderDialog by remember { mutableStateOf(reminderTime == null) }
+    var showM3ReminderDialog by remember {
+        mutableStateOf(reminderTime == null)
+    }
 
     if (!showM3ReminderDialog && reminderTime != null) {
-        // Show Options Dialog
         val reminderString =
             remember(reminderTime) {
-                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+                val sdf =
+                    SimpleDateFormat(
+                        "yyyy-MM-dd HH:mm",
+                        Locale.getDefault(),
+                    )
                 sdf.format(Date(reminderTime))
             }
+
+        val repeatText =
+            when {
+                repeatInterval == null || repeatUnit == null ->
+                    stringResource(R.string.repeat_does_not_repeat)
+
+                repeatInterval == 1L && repeatUnit == "DAYS" ->
+                    stringResource(R.string.repeat_daily)
+
+                repeatInterval == 1L && repeatUnit == "WEEKS" ->
+                    stringResource(R.string.repeat_weekly)
+
+                repeatInterval == 1L && repeatUnit == "MONTHS" ->
+                    stringResource(R.string.repeat_monthly)
+
+                else ->
+                    "${stringResource(R.string.every)} " +
+                        "$repeatInterval ${repeatUnit.lowercase()}"
+            }
+
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text(text = "Note Reminder") },
+            title = {
+                Text(
+                    text = stringResource(R.string.note_reminder_dialog_title),
+                    color = contentColor,
+                )
+            },
             text = {
                 Column {
-                    Text(text = "Reminder set for:\n$reminderString", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = stringResource(R.string.reminder_set_for_label, reminderString),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = contentColor,
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = stringResource(R.string.repeat_label_prefix, repeatText),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = contentColor.copy(alpha = 0.6f),
+                    )
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = {
-                        onReminderSet(null)
+                        onReminderSet(null, null, null)
                         onDismiss()
                     },
                 ) {
-                    Text(stringResource(R.string.remove), color = contentColor)
+                    Text(
+                        stringResource(R.string.remove),
+                        color = contentColor,
+                    )
                 }
             },
             confirmButton = {
@@ -122,7 +162,10 @@ fun ReminderDialog(
                         showM3ReminderDialog = true
                     },
                 ) {
-                    Text(stringResource(R.string.change), color = contentColor)
+                    Text(
+                        stringResource(R.string.change),
+                        color = contentColor,
+                    )
                 }
             },
             containerColor = backgroundColor,
@@ -130,33 +173,110 @@ fun ReminderDialog(
             textContentColor = contentColor.copy(alpha = 0.8f),
         )
     } else {
-        // Show Date and Time selection dialog
         val initialCal =
             remember(reminderTime) {
-                Calendar.getInstance().apply { timeInMillis = reminderTime ?: System.currentTimeMillis() }
+                Calendar.getInstance().apply {
+                    timeInMillis =
+                        reminderTime ?: System.currentTimeMillis()
+                }
             }
 
-        var selectedDateMillis by remember { mutableStateOf(reminderTime ?: System.currentTimeMillis()) }
-        var selectedHour by remember { mutableIntStateOf(initialCal.get(Calendar.HOUR_OF_DAY)) }
-        var selectedMinute by remember { mutableIntStateOf(initialCal.get(Calendar.MINUTE)) }
-        var repeatOption by remember { mutableStateOf("Does not repeat") }
+        var selectedDateMillis by remember {
+            mutableStateOf(
+                reminderTime ?: System.currentTimeMillis(),
+            )
+        }
 
-        var showSubDatePicker by remember { mutableStateOf(false) }
-        var showSubTimePicker by remember { mutableStateOf(false) }
-        var showRepeatMenu by remember { mutableStateOf(false) }
+        var selectedHour by remember {
+            mutableIntStateOf(
+                initialCal.get(Calendar.HOUR_OF_DAY),
+            )
+        }
 
-        val sdfDate = remember { SimpleDateFormat("MMMM d", Locale.getDefault()) }
-        val dateText = remember(selectedDateMillis) { sdfDate.format(Date(selectedDateMillis)) }
+        var selectedMinute by remember {
+            mutableIntStateOf(
+                initialCal.get(Calendar.MINUTE),
+            )
+        }
+
+        var currentRepeatInterval by remember {
+            mutableStateOf(repeatInterval)
+        }
+
+        var currentRepeatUnit by remember {
+            mutableStateOf(repeatUnit)
+        }
+
+        var showSubDatePicker by remember {
+            mutableStateOf(false)
+        }
+
+        var showSubTimePicker by remember {
+            mutableStateOf(false)
+        }
+
+        var showRepeatMenu by remember {
+            mutableStateOf(false)
+        }
+
+        var showCustomRepeatDialog by remember {
+            mutableStateOf(false)
+        }
+
+        val sdfDate =
+            remember {
+                SimpleDateFormat(
+                    "MMMM d",
+                    Locale.getDefault(),
+                )
+            }
+
+        val dateText =
+            remember(selectedDateMillis) {
+                sdfDate.format(Date(selectedDateMillis))
+            }
+
         val timeText =
             remember(selectedHour, selectedMinute) {
-                String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+                String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d",
+                    selectedHour,
+                    selectedMinute,
+                )
+            }
+
+        // Only one declaration of repeatOptionText.
+        val localRepeatUnit = currentRepeatUnit
+
+        val repeatOptionText =
+            when {
+                currentRepeatInterval == null ||
+                    localRepeatUnit == null ->
+                    stringResource(R.string.repeat_does_not_repeat)
+
+                currentRepeatInterval == 1L &&
+                    localRepeatUnit == "DAYS" ->
+                    stringResource(R.string.repeat_daily)
+
+                currentRepeatInterval == 1L &&
+                    localRepeatUnit == "WEEKS" ->
+                    stringResource(R.string.repeat_weekly)
+
+                currentRepeatInterval == 1L &&
+                    localRepeatUnit == "MONTHS" ->
+                    stringResource(R.string.repeat_monthly)
+
+                else ->
+                    "${stringResource(R.string.every)} " +
+                        "$currentRepeatInterval ${localRepeatUnit.lowercase()}"
             }
 
         AlertDialog(
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    text = "Pick a date & time",
+                    text = stringResource(R.string.pick_date_time_title),
                     style = MaterialTheme.typography.headlineSmall,
                     color = contentColor,
                 )
@@ -166,38 +286,90 @@ fun ReminderDialog(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    // Date field
                     ReminderDropdownField(
                         value = dateText,
-                        onClick = { showSubDatePicker = true },
+                        onClick = {
+                            showSubDatePicker = true
+                        },
                         contentColor = contentColor,
                     )
 
-                    // Time field
                     ReminderDropdownField(
                         value = timeText,
-                        onClick = { showSubTimePicker = true },
+                        onClick = {
+                            showSubTimePicker = true
+                        },
                         contentColor = contentColor,
                     )
 
-                    // Repeat option
-                    Column(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
                         ReminderDropdownField(
-                            value = repeatOption,
-                            onClick = { showRepeatMenu = true },
+                            value = repeatOptionText,
+                            onClick = {
+                                showRepeatMenu = true
+                            },
                             contentColor = contentColor,
                         )
+
                         DropdownMenu(
                             expanded = showRepeatMenu,
-                            onDismissRequest = { showRepeatMenu = false },
-                            modifier = Modifier.background(backgroundColor),
+                            onDismissRequest = {
+                                showRepeatMenu = false
+                            },
+                            modifier =
+                                Modifier.background(
+                                    backgroundColor,
+                                ),
                         ) {
-                            val options = listOf("Does not repeat", "Daily", "Weekly", "Monthly")
-                            options.forEach { option ->
+                            val options =
+                                listOf(
+                                    (
+                                        stringResource(
+                                            R.string.repeat_does_not_repeat,
+                                        ) to null as Long?
+                                    ) to null as String?,
+                                    (
+                                        stringResource(
+                                            R.string.repeat_daily,
+                                        ) to 1L
+                                    ) to "DAYS",
+                                    (
+                                        stringResource(
+                                            R.string.repeat_weekly,
+                                        ) to 1L
+                                    ) to "WEEKS",
+                                    (
+                                        stringResource(
+                                            R.string.repeat_monthly,
+                                        ) to 1L
+                                    ) to "MONTHS",
+                                    (
+                                        stringResource(
+                                            R.string.repeat_custom,
+                                        ) to -1L
+                                    ) to "CUSTOM",
+                                )
+
+                            options.forEach { (labelInfo, unit) ->
+                                val (label, interval) = labelInfo
+
                                 DropdownMenuItem(
-                                    text = { Text(option, color = contentColor) },
+                                    text = {
+                                        Text(
+                                            label,
+                                            color = contentColor,
+                                        )
+                                    },
                                     onClick = {
-                                        repeatOption = option
+                                        if (interval == -1L) {
+                                            showCustomRepeatDialog = true
+                                        } else {
+                                            currentRepeatInterval = interval
+                                            currentRepeatUnit = unit
+                                        }
+
                                         showRepeatMenu = false
                                     },
                                 )
@@ -212,50 +384,132 @@ fun ReminderDialog(
                         val calendar =
                             Calendar.getInstance().apply {
                                 timeInMillis = selectedDateMillis
-                                set(Calendar.HOUR_OF_DAY, selectedHour)
-                                set(Calendar.MINUTE, selectedMinute)
-                                set(Calendar.SECOND, 0)
-                                set(Calendar.MILLISECOND, 0)
+
+                                set(
+                                    Calendar.HOUR_OF_DAY,
+                                    selectedHour,
+                                )
+
+                                set(
+                                    Calendar.MINUTE,
+                                    selectedMinute,
+                                )
+
+                                set(
+                                    Calendar.SECOND,
+                                    0,
+                                )
+
+                                set(
+                                    Calendar.MILLISECOND,
+                                    0,
+                                )
                             }
-                        onReminderSet(calendar.timeInMillis)
+
+                        onReminderSet(
+                            calendar.timeInMillis,
+                            currentRepeatInterval,
+                            currentRepeatUnit,
+                        )
+
                         onDismiss()
                     },
                 ) {
-                    Text(stringResource(R.string.save), color = contentColor)
+                    Text(
+                        stringResource(R.string.save),
+                        color = contentColor,
+                    )
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = onDismiss,
                 ) {
-                    Text(stringResource(R.string.cancel), color = contentColor)
+                    Text(
+                        stringResource(R.string.cancel),
+                        color = contentColor,
+                    )
                 }
             },
             containerColor = backgroundColor,
             titleContentColor = contentColor,
         )
 
-        // Nested Date Picker Dialog
+        if (showCustomRepeatDialog) {
+            CustomRepeatDialog(
+                initialInterval = currentRepeatInterval ?: 1L,
+                initialUnit = currentRepeatUnit ?: "DAYS",
+                onConfirm = { interval, unit ->
+                    currentRepeatInterval = interval
+                    currentRepeatUnit = unit
+                    showCustomRepeatDialog = false
+                },
+                onDismiss = {
+                    showCustomRepeatDialog = false
+                },
+                backgroundColor = backgroundColor,
+                contentColor = contentColor,
+            )
+        }
+
         if (showSubDatePicker) {
             val datePickerState =
                 rememberDatePickerState(
                     initialSelectedDateMillis = selectedDateMillis,
                 )
+
             DatePickerDialog(
-                onDismissRequest = { showSubDatePicker = false },
+                onDismissRequest = {
+                    showSubDatePicker = false
+                },
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            selectedDateMillis = datePickerState.selectedDateMillis ?: selectedDateMillis
+                            datePickerState.selectedDateMillis?.let { utcMillis ->
+                                // DatePicker returns UTC midnight;
+                                // extract Y/M/D and reapply in local TZ.
+                                val utcCal =
+                                    Calendar
+                                        .getInstance(
+                                            TimeZone.getTimeZone("UTC"),
+                                        ).apply {
+                                            timeInMillis = utcMillis
+                                        }
+
+                                val localCal =
+                                    Calendar.getInstance().apply {
+                                        set(
+                                            utcCal.get(Calendar.YEAR),
+                                            utcCal.get(Calendar.MONTH),
+                                            utcCal.get(Calendar.DAY_OF_MONTH),
+                                            initialCal.get(Calendar.HOUR_OF_DAY),
+                                            initialCal.get(Calendar.MINUTE),
+                                        )
+                                    }
+
+                                selectedDateMillis =
+                                    localCal.timeInMillis
+                            }
+
                             showSubDatePicker = false
                         },
                     ) {
-                        Text(stringResource(R.string.ok), color = contentColor)
+                        Text(
+                            stringResource(R.string.ok),
+                            color = contentColor,
+                        )
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showSubDatePicker = false }) {
-                        Text(stringResource(R.string.cancel), color = contentColor)
+                    TextButton(
+                        onClick = {
+                            showSubDatePicker = false
+                        },
+                    ) {
+                        Text(
+                            stringResource(R.string.cancel),
+                            color = contentColor,
+                        )
                     }
                 },
                 colors =
@@ -275,35 +529,51 @@ fun ReminderDialog(
             }
         }
 
-        // Nested Time Picker Dialog with clock/keyboard toggle
         if (showSubTimePicker) {
+            // Keep only one timePickerState declaration.
             val timePickerState =
                 rememberTimePickerState(
                     initialHour = selectedHour,
                     initialMinute = selectedMinute,
-                    is24Hour = false,
+                    is24Hour = true,
                 )
-            var isClockMode by remember { mutableStateOf(false) }
+
+            var isClockMode by remember {
+                mutableStateOf(false)
+            }
 
             val timePickerColors =
                 TimePickerDefaults.colors(
-                    clockDialColor = contentColor.copy(alpha = 0.05f),
-                    clockDialSelectedContentColor = backgroundColor,
-                    clockDialUnselectedContentColor = contentColor,
+                    clockDialColor =
+                        contentColor.copy(alpha = 0.05f),
+                    clockDialSelectedContentColor =
+                    backgroundColor,
+                    clockDialUnselectedContentColor =
+                    contentColor,
                     selectorColor = contentColor,
                     periodSelectorBorderColor = contentColor,
-                    periodSelectorSelectedContainerColor = contentColor.copy(alpha = 0.15f),
-                    periodSelectorUnselectedContainerColor = Color.Transparent,
-                    periodSelectorSelectedContentColor = contentColor,
-                    periodSelectorUnselectedContentColor = contentColor,
-                    timeSelectorSelectedContainerColor = contentColor.copy(alpha = 0.15f),
-                    timeSelectorUnselectedContainerColor = contentColor.copy(alpha = 0.05f),
-                    timeSelectorSelectedContentColor = contentColor,
-                    timeSelectorUnselectedContentColor = contentColor,
+                    periodSelectorSelectedContainerColor =
+                        contentColor.copy(alpha = 0.15f),
+                    periodSelectorUnselectedContainerColor =
+                        Color.Transparent,
+                    periodSelectorSelectedContentColor =
+                    contentColor,
+                    periodSelectorUnselectedContentColor =
+                    contentColor,
+                    timeSelectorSelectedContainerColor =
+                        contentColor.copy(alpha = 0.15f),
+                    timeSelectorUnselectedContainerColor =
+                        contentColor.copy(alpha = 0.05f),
+                    timeSelectorSelectedContentColor =
+                    contentColor,
+                    timeSelectorUnselectedContentColor =
+                    contentColor,
                 )
 
             AlertDialog(
-                onDismissRequest = { showSubTimePicker = false },
+                onDismissRequest = {
+                    showSubTimePicker = false
+                },
                 confirmButton = {
                     TextButton(
                         onClick = {
@@ -312,15 +582,30 @@ fun ReminderDialog(
                             showSubTimePicker = false
                         },
                     ) {
-                        Text(stringResource(R.string.ok), color = contentColor)
+                        Text(
+                            stringResource(R.string.ok),
+                            color = contentColor,
+                        )
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showSubTimePicker = false }) {
-                        Text(stringResource(R.string.cancel), color = contentColor)
+                    TextButton(
+                        onClick = {
+                            showSubTimePicker = false
+                        },
+                    ) {
+                        Text(
+                            stringResource(R.string.cancel),
+                            color = contentColor,
+                        )
                     }
                 },
-                title = { Text(stringResource(R.string.select_time)) },
+                title = {
+                    Text(
+                        stringResource(R.string.select_time),
+                        color = contentColor,
+                    )
+                },
                 text = {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -337,12 +622,16 @@ fun ReminderDialog(
                                 colors = timePickerColors,
                             )
                         }
-                        // Clock / Keyboard toggle icon at the bottom left
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Start,
                         ) {
-                            IconButton(onClick = { isClockMode = !isClockMode }) {
+                            IconButton(
+                                onClick = {
+                                    isClockMode = !isClockMode
+                                },
+                            ) {
                                 Icon(
                                     imageVector =
                                         if (isClockMode) {
@@ -350,7 +639,12 @@ fun ReminderDialog(
                                         } else {
                                             Icons.Default.AccessTime
                                         },
-                                    contentDescription = if (isClockMode) "Switch to keyboard" else "Switch to clock",
+                                    contentDescription =
+                                        if (isClockMode) {
+                                            stringResource(R.string.keyboard_mode_desc)
+                                        } else {
+                                            stringResource(R.string.clock_mode_desc)
+                                        },
                                     tint = contentColor,
                                 )
                             }
@@ -362,6 +656,216 @@ fun ReminderDialog(
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CustomRepeatDialog(
+    initialInterval: Long,
+    initialUnit: String,
+    onConfirm: (Long, String) -> Unit,
+    onDismiss: () -> Unit,
+    backgroundColor: Color,
+    contentColor: Color,
+) {
+    var intervalText by remember {
+        mutableStateOf(
+            if (initialInterval <= 0) {
+                "1"
+            } else {
+                initialInterval.toString()
+            },
+        )
+    }
+
+    var selectedUnit by remember {
+        mutableStateOf(
+            if (initialUnit == "CUSTOM") {
+                "DAYS"
+            } else {
+                initialUnit
+            },
+        )
+    }
+
+    var showUnitMenu by remember {
+        mutableStateOf(false)
+    }
+
+    val units =
+        listOf(
+            "MINUTES",
+            "HOURS",
+            "DAYS",
+            "WEEKS",
+            "MONTHS",
+            "YEARS",
+        )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                stringResource(R.string.custom_repeat_title),
+                color = contentColor,
+            )
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                OutlinedTextField(
+                    value = intervalText,
+                    onValueChange = {
+                        if (it.all { char -> char.isDigit() }) {
+                            intervalText = it
+                        }
+                    },
+                    label = {
+                        Text(stringResource(R.string.interval_label))
+                    },
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                        ),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = contentColor,
+                            unfocusedTextColor = contentColor,
+                            focusedLabelColor = contentColor,
+                            unfocusedLabelColor =
+                                contentColor.copy(alpha = 0.7f),
+                        ),
+                )
+
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    val unitLabel =
+                        when (selectedUnit) {
+                            "MINUTES" ->
+                                stringResource(R.string.unit_minutes)
+
+                            "HOURS" ->
+                                stringResource(R.string.unit_hours)
+
+                            "DAYS" ->
+                                stringResource(R.string.unit_days)
+
+                            "WEEKS" ->
+                                stringResource(R.string.unit_weeks)
+
+                            "MONTHS" ->
+                                stringResource(R.string.unit_months)
+
+                            "YEARS" ->
+                                stringResource(R.string.unit_years)
+
+                            else -> selectedUnit
+                        }
+
+                    ReminderDropdownField(
+                        value = unitLabel,
+                        onClick = {
+                            showUnitMenu = true
+                        },
+                        contentColor = contentColor,
+                    )
+
+                    DropdownMenu(
+                        expanded = showUnitMenu,
+                        onDismissRequest = {
+                            showUnitMenu = false
+                        },
+                        modifier =
+                            Modifier.background(
+                                backgroundColor,
+                            ),
+                    ) {
+                        units.forEach { unit ->
+                            val label =
+                                when (unit) {
+                                    "MINUTES" ->
+                                        stringResource(
+                                            R.string.unit_minutes,
+                                        )
+
+                                    "HOURS" ->
+                                        stringResource(
+                                            R.string.unit_hours,
+                                        )
+
+                                    "DAYS" ->
+                                        stringResource(
+                                            R.string.unit_days,
+                                        )
+
+                                    "WEEKS" ->
+                                        stringResource(
+                                            R.string.unit_weeks,
+                                        )
+
+                                    "MONTHS" ->
+                                        stringResource(
+                                            R.string.unit_months,
+                                        )
+
+                                    "YEARS" ->
+                                        stringResource(
+                                            R.string.unit_years,
+                                        )
+
+                                    else -> unit
+                                }
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        label,
+                                        color = contentColor,
+                                    )
+                                },
+                                onClick = {
+                                    selectedUnit = unit
+                                    showUnitMenu = false
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val interval =
+                        intervalText.toLongOrNull() ?: 1L
+
+                    onConfirm(
+                        if (interval <= 0) 1L else interval,
+                        selectedUnit,
+                    )
+                },
+            ) {
+                Text(
+                    stringResource(R.string.ok),
+                    color = contentColor,
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+            ) {
+                Text(
+                    stringResource(R.string.cancel),
+                    color = contentColor,
+                )
+            }
+        },
+        containerColor = backgroundColor,
+    )
 }
 
 @Composable
@@ -388,19 +892,24 @@ private fun ReminderDropdownField(
                 style = MaterialTheme.typography.bodyLarge,
                 color = contentColor,
             )
+
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown",
+                contentDescription = stringResource(R.string.dropdown_desc),
                 tint = contentColor,
             )
         }
+
         Spacer(modifier = Modifier.height(4.dp))
+
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(contentColor.copy(alpha = 0.2f)),
+                    .background(
+                        contentColor.copy(alpha = 0.2f),
+                    ),
         )
     }
 }

@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,8 +38,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.Support
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -105,7 +106,7 @@ fun AboutScreen(navController: NavController) {
                     FilledTonalIconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back_desc),
                         )
                     }
                 },
@@ -163,10 +164,10 @@ fun AboutScreen(navController: NavController) {
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Notes,
+                                    painter = painterResource(R.drawable.ic_logo_monochrome),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(32.dp),
+                                    modifier = Modifier.size(40.dp),
                                 )
                             }
                             Spacer(modifier = Modifier.width(16.dp))
@@ -258,6 +259,44 @@ fun AboutScreen(navController: NavController) {
                                 bottomStart = 12.dp,
                                 bottomEnd = 12.dp,
                             ),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            ),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        ListItem(
+                            modifier =
+                                Modifier.clickable {
+                                    uriHandler.openUri("https://hosted.weblate.org/engage/open-notes/")
+                                },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Translate,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            },
+                            headlineContent = { Text(stringResource(R.string.help_translate)) },
+                            supportingContent = { Text(stringResource(R.string.help_translate_description)) },
+                            trailingContent = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            },
+                            colors =
+                                ListItemDefaults.colors(
+                                    containerColor = Color.Transparent,
+                                ),
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Card(
+                        shape = RoundedCornerShape(12.dp),
                         colors =
                             CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer,

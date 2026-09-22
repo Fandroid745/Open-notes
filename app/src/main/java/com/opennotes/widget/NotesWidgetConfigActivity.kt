@@ -23,11 +23,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,6 +56,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,6 +65,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.opennotes.R
 import com.opennotes.notes.domain.usecase.NoteUseCases
 import com.opennotes.settings.presentation.SettingsViewModel
 import com.opennotes.ui.theme.OpenNotesTheme
@@ -76,6 +80,7 @@ class NotesWidgetConfigActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         val appWidgetId =
@@ -103,7 +108,7 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                         LargeTopAppBar(
                             title = {
                                 Text(
-                                    "Select a note",
+                                    stringResource(R.string.widget_select_a_note),
                                     style =
                                         MaterialTheme.typography.headlineLarge.copy(
                                             fontWeight = FontWeight.Bold,
@@ -112,8 +117,8 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                             },
                             colors =
                                 TopAppBarDefaults.largeTopAppBarColors(
-                                    containerColor = MaterialTheme.colorScheme.background,
-                                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                                    containerColor = Color.Transparent,
+                                    scrolledContainerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
                                 ),
                         )
                     },
@@ -143,7 +148,7 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                     Text(
-                                        text = "No notes found",
+                                        text = stringResource(R.string.widget_no_notes_found),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
@@ -155,10 +160,15 @@ class NotesWidgetConfigActivity : ComponentActivity() {
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .padding(paddingValues)
-                                        .padding(horizontal = 16.dp),
+                                        .consumeWindowInsets(paddingValues),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(vertical = 16.dp),
+                                contentPadding =
+                                    PaddingValues(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = paddingValues.calculateTopPadding() + 16.dp,
+                                        bottom = paddingValues.calculateBottomPadding() + 16.dp,
+                                    ),
                             ) {
                                 items(notes!!) { note ->
                                     Card(

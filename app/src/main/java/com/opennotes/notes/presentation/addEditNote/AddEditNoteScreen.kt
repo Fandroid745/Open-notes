@@ -18,8 +18,6 @@
 
 package com.opennotes.notes.presentation.addEditNote
 
-import com.opennotes.R
-import androidx.compose.ui.res.stringResource
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -34,20 +32,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -55,7 +40,9 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
@@ -65,35 +52,8 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.ripple
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -106,15 +66,18 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.opennotes.R
 import com.opennotes.notes.presentation.addEditNote.components.FormatToolbar
 import com.opennotes.notes.presentation.addEditNote.components.ReminderDialog
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownField
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownFormatter
 import com.opennotes.notes.presentation.util.formatToDateTime
+import com.opennotes.settings.presentation.CustomColorDialog
 import com.opennotes.ui.theme.NoteColorPalette
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -125,6 +88,8 @@ fun AddEditNoteScreen(
     navController: NavController,
     noteColor: Int?,
     isDarkTheme: Boolean,
+    startInReadingMode: Boolean = false,
+    markdownEnabled: Boolean = true,
     modifier: Modifier = Modifier,
     viewModel: AddEditNoteViewModel = hiltViewModel(),
 ) {
@@ -134,7 +99,7 @@ fun AddEditNoteScreen(
     val haptic = LocalHapticFeedback.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-    var isPreviewMode by remember { mutableStateOf(false) }
+    var isPreviewMode by remember { mutableStateOf(startInReadingMode) }
     var showMenu by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
     var showReminderDialog by remember { mutableStateOf(false) }
@@ -187,7 +152,9 @@ fun AddEditNoteScreen(
     val scope = rememberCoroutineScope()
 
     var showColorPicker by remember { mutableStateOf(false) }
+    var showCustomColorDialog by remember { mutableStateOf(false) }
     var showFormatToolbar by remember { mutableStateOf(false) }
+    val isEditingMode = !isPreviewMode
 
     Box(modifier = modifier) {
         LaunchedEffect(contentState.text) {
@@ -208,7 +175,10 @@ fun AddEditNoteScreen(
             viewModel.eventFlow.collectLatest { event ->
                 when (event) {
                     is AddEditNoteViewModel.UiEvent.ShowSnackbar -> {
-                        snackbarHostState.showSnackbar(message = event.message)
+                        val message =
+                            event.message ?: event.messageResId?.let { context.getString(it) }
+                                ?: "Unknown error"
+                        snackbarHostState.showSnackbar(message = message)
                     }
 
                     is AddEditNoteViewModel.UiEvent.SavedNote -> {
@@ -225,6 +195,7 @@ fun AddEditNoteScreen(
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
+            containerColor = backgroundColor,
             topBar = {
                 TopAppBar(
                     title = { Text("") },
@@ -232,14 +203,21 @@ fun AddEditNoteScreen(
                         IconButton(onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Go back",
+                                contentDescription = stringResource(R.string.go_back_desc),
                                 tint = contentColor,
                             )
                         }
                     },
                     actions = {
                         FilledIconButton(
-                            onClick = { isPreviewMode = !isPreviewMode },
+                            onClick = {
+                                isPreviewMode = !isPreviewMode
+                                if (isPreviewMode) {
+                                    showFormatToolbar = false
+                                    showColorPicker = false
+                                    showCustomColorDialog = false
+                                }
+                            },
                             colors =
                                 IconButtonDefaults.filledIconButtonColors(
                                     containerColor = contentColor.copy(alpha = 0.15f),
@@ -247,8 +225,8 @@ fun AddEditNoteScreen(
                                 ),
                         ) {
                             Icon(
-                                imageVector = if (isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                contentDescription = if (isPreviewMode) "Edit mode" else "Preview mode",
+                                imageVector = if (isPreviewMode) Icons.Default.Visibility else Icons.Default.Edit,
+                                contentDescription = if (isPreviewMode) stringResource(R.string.reading_mode_desc) else stringResource(R.string.editing_mode_desc),
                                 tint = contentColor,
                             )
                         }
@@ -263,22 +241,23 @@ fun AddEditNoteScreen(
                         ) {
                             Icon(
                                 imageVector = if (viewModel.noteReminderTime.value != null) Icons.Default.NotificationsActive else Icons.Default.Notifications,
-                                contentDescription = "Set reminder",
+                                contentDescription = stringResource(R.string.set_reminder_desc),
                                 tint = contentColor,
                             )
                         }
                     },
                     colors =
                         TopAppBarDefaults.topAppBarColors(
-                            containerColor = backgroundColor,
+                            containerColor = Color.Transparent,
+                            scrolledContainerColor = Color.Transparent,
                         ),
                 )
             },
             bottomBar = {
                 Column(
-                    modifier = Modifier.background(backgroundColor),
+                    modifier = Modifier.background(Color.Transparent),
                 ) {
-                    if (showFormatToolbar) {
+                    if (showFormatToolbar && isEditingMode && markdownEnabled) {
                         FormatToolbar(
                             contentColor = contentColor,
                             onFormatClick = { format ->
@@ -288,57 +267,61 @@ fun AddEditNoteScreen(
                         )
                     }
                     BottomAppBar(
-                        containerColor = backgroundColor,
+                        containerColor = Color.Transparent,
                         contentColor = contentColor,
                     ) {
-                        FilledIconButton(
-                            onClick = { showColorPicker = true },
-                            colors =
-                                IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = contentColor.copy(alpha = 0.15f),
-                                    contentColor = contentColor,
-                                ),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Palette,
-                                contentDescription = "Change color",
-                                tint = contentColor,
-                                modifier = Modifier.size(28.dp),
-                            )
-                        }
-                        FilledIconButton(
-                            onClick = {
-                                photoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                        if (isEditingMode) {
+                            FilledIconButton(
+                                onClick = { showColorPicker = true },
+                                colors =
+                                    IconButtonDefaults.filledIconButtonColors(
+                                        containerColor = contentColor.copy(alpha = 0.15f),
+                                        contentColor = contentColor,
+                                    ),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Palette,
+                                    contentDescription = stringResource(R.string.change_color_desc),
+                                    tint = contentColor,
+                                    modifier = Modifier.size(28.dp),
                                 )
-                            },
-                            colors =
-                                IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = contentColor.copy(alpha = 0.15f),
-                                    contentColor = contentColor,
-                                ),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Image,
-                                contentDescription = "Add image",
-                                tint = contentColor,
-                                modifier = Modifier.size(28.dp),
-                            )
-                        }
-                        FilledIconButton(
-                            onClick = { showFormatToolbar = !showFormatToolbar },
-                            colors =
-                                IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = if (showFormatToolbar) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
-                                    contentColor = contentColor,
-                                ),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.TextFields,
-                                contentDescription = "Format text",
-                                tint = contentColor,
-                                modifier = Modifier.size(28.dp),
-                            )
+                            }
+                            FilledIconButton(
+                                onClick = {
+                                    photoPickerLauncher.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                                    )
+                                },
+                                colors =
+                                    IconButtonDefaults.filledIconButtonColors(
+                                        containerColor = contentColor.copy(alpha = 0.15f),
+                                        contentColor = contentColor,
+                                    ),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Image,
+                                    contentDescription = stringResource(R.string.add_image_desc),
+                                    tint = contentColor,
+                                    modifier = Modifier.size(28.dp),
+                                )
+                            }
+                            if (markdownEnabled) {
+                                FilledIconButton(
+                                    onClick = { showFormatToolbar = !showFormatToolbar },
+                                    colors =
+                                        IconButtonDefaults.filledIconButtonColors(
+                                            containerColor = if (showFormatToolbar) contentColor.copy(alpha = 0.3f) else contentColor.copy(alpha = 0.15f),
+                                            contentColor = contentColor,
+                                        ),
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.TextFields,
+                                        contentDescription = stringResource(R.string.format_text_desc),
+                                        tint = contentColor,
+                                        modifier = Modifier.size(28.dp),
+                                    )
+                                }
+                            }
                         }
                         Spacer(modifier = Modifier.weight(1f))
                         Box {
@@ -352,7 +335,7 @@ fun AddEditNoteScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.MoreVert,
-                                    contentDescription = "More options",
+                                    contentDescription = stringResource(R.string.more_options_desc),
                                     tint = contentColor,
                                     modifier = Modifier.size(28.dp),
                                 )
@@ -413,17 +396,19 @@ fun AddEditNoteScreen(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(backgroundColor)
+                            .background(Color.Transparent)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                             ) {
-                                if (!isPreviewMode) {
+                                if (isEditingMode) {
                                     contentFocusRequester.requestFocus()
                                 }
                             }.padding(paddingValues)
                             .consumeWindowInsets(paddingValues)
-                            .imePadding()
+                            .windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+                            ).imePadding()
                             .padding(16.dp),
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -433,6 +418,7 @@ fun AddEditNoteScreen(
                         contentTextFieldValue = contentTextFieldValue,
                         contentColor = contentColor,
                         isPreviewMode = isPreviewMode,
+                        markdownEnabled = markdownEnabled,
                         interactionSource = interactionSource,
                         contentFocusRequester = contentFocusRequester,
                         titleFocusRequester = titleFocusRequester,
@@ -464,7 +450,7 @@ fun AddEditNoteScreen(
                 containerColor = backgroundColor,
             ) {
                 Text(
-                    text = "Color",
+                    text = stringResource(R.string.color_label),
                     style =
                         MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
@@ -479,7 +465,29 @@ fun AddEditNoteScreen(
                             .padding(bottom = 32.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    item {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier =
+                                Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(contentColor.copy(alpha = 0.1f))
+                                    .clickable {
+                                        showColorPicker = false
+                                        showCustomColorDialog = true
+                                    },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = stringResource(R.string.custom_color),
+                                tint = contentColor,
+                            )
+                        }
+                    }
+
                     items(noteColors) { color ->
                         val colorInt = remember(color) { color.toArgb() }
                         val isSelected = viewModel.noteColor.value == colorInt
@@ -524,7 +532,7 @@ fun AddEditNoteScreen(
                             if (isSelected) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(R.string.selected_desc),
                                     tint = contentColor,
                                     modifier = Modifier.size(20.dp),
                                 )
@@ -536,10 +544,10 @@ fun AddEditNoteScreen(
         }
 
         if (showInfoDialog) {
-            val timestamp = viewModel.noteTimestamp.value
+            val createdAt = viewModel.noteTimestamp.value
             val dateString =
-                remember(timestamp) {
-                    timestamp?.formatToDateTime() ?: "Not saved yet"
+                remember(createdAt) {
+                    createdAt?.formatToDateTime() ?: "Not saved yet"
                 }
             val wordCount =
                 remember(contentState.text) {
@@ -557,30 +565,53 @@ fun AddEditNoteScreen(
                 title = { Text(text = stringResource(R.string.note_info)) },
                 text = {
                     Column {
-                        Text(text = "Created: $dateString", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = stringResource(R.string.created_label, dateString), style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Words: $wordCount", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = stringResource(R.string.words_label, wordCount), style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = "Characters: $charCount", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = stringResource(R.string.characters_label, charCount), style = MaterialTheme.typography.bodyMedium)
                     }
                 },
                 confirmButton = {
                     TextButton(onClick = { showInfoDialog = false }) {
-                        Text(stringResource(R.string.ok), color = contentColor)
+                        Text(stringResource(R.string.ok), color = MaterialTheme.colorScheme.primary)
                     }
                 },
-                containerColor = backgroundColor,
-                titleContentColor = contentColor,
-                textContentColor = contentColor.copy(alpha = 0.8f),
+                containerColor = MaterialTheme.colorScheme.surface,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                textContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
             )
         }
         if (showReminderDialog) {
             ReminderDialog(
                 reminderTime = viewModel.noteReminderTime.value,
-                onReminderSet = { time -> viewModel.onEvent(AddEditNoteEvent.SetReminder(time)) },
+                repeatInterval = viewModel.noteRepeatInterval.value,
+                repeatUnit = viewModel.noteRepeatUnit.value,
+                onReminderSet = { time, interval, unit ->
+                    viewModel.onEvent(AddEditNoteEvent.SetReminder(time, interval, unit))
+                },
                 onDismiss = { showReminderDialog = false },
-                backgroundColor = backgroundColor,
-                contentColor = contentColor,
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+
+        if (showCustomColorDialog) {
+            CustomColorDialog(
+                initialColor = backgroundColor,
+                onConfirm = { color ->
+                    val colorInt = color.toArgb()
+                    scope.launch {
+                        noteBackgroundAnimatable.animateTo(
+                            targetValue = Color(colorInt),
+                            animationSpec = tween(durationMillis = 500),
+                        )
+                    }
+                    viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
+                    showCustomColorDialog = false
+                    showColorPicker = false
+                },
+                onDismiss = { showCustomColorDialog = false },
             )
         }
     }

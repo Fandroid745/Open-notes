@@ -21,7 +21,9 @@ package com.opennotes.notes.presentation
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -47,14 +49,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.opennotes.R
 import com.opennotes.notes.presentation.addEditNote.AddEditNoteScreen
 import com.opennotes.notes.presentation.notes.NotesScreen
 import com.opennotes.notes.presentation.util.Screen
@@ -62,23 +63,24 @@ import com.opennotes.settings.domain.model.ThemeMode
 import com.opennotes.settings.presentation.AboutScreen
 import com.opennotes.settings.presentation.AppearanceSettingsScreen
 import com.opennotes.settings.presentation.BackupScreen
+import com.opennotes.settings.presentation.BehaviorSettingsScreen
 import com.opennotes.settings.presentation.PrivacySettingsScreen
 import com.opennotes.settings.presentation.SettingsScreen
 import com.opennotes.settings.presentation.SettingsViewModel
-import com.opennotes.R
 import com.opennotes.ui.theme.NoteColorPalette
 import com.opennotes.ui.theme.OpenNotesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @AndroidEntryPoint
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     private lateinit var biometricPrompt: BiometricPrompt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { !settingsViewModel.isLoaded.value }
 
@@ -103,8 +105,6 @@ class MainActivity : FragmentActivity() {
                     override fun onAuthenticationFailed() = Unit
                 },
             )
-
-        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             val currentSettings by settingsViewModel.settings.collectAsState()
@@ -219,6 +219,8 @@ class MainActivity : FragmentActivity() {
                                     navController = navController,
                                     noteColor = resolvedColor,
                                     isDarkTheme = isDarkTheme,
+                                    startInReadingMode = currentSettings.openInReadingMode,
+                                    markdownEnabled = currentSettings.markdownEnabled,
                                 )
                             }
                             composable(route = Screen.SettingsScreen.route) {
@@ -235,6 +237,12 @@ class MainActivity : FragmentActivity() {
                             }
                             composable(route = Screen.AppearanceSettingsScreen.route) {
                                 AppearanceSettingsScreen(
+                                    navController = navController,
+                                    viewModel = settingsViewModel,
+                                )
+                            }
+                            composable(route = Screen.BehaviorSettingsScreen.route) {
+                                BehaviorSettingsScreen(
                                     navController = navController,
                                     viewModel = settingsViewModel,
                                 )

@@ -96,6 +96,7 @@ class NotesViewModel
                     val existingNote = currentSelection.find { it.id == event.note.id }
                     if (existingNote != null) {
                         currentSelection.remove(existingNote)
+                        state.value.selectedNotes.minus(existingNote)
                     } else {
                         currentSelection.add(event.note)
                     }
@@ -144,8 +145,8 @@ class NotesViewModel
                     .onEach { notes ->
                         val sortedByOrder =
                             when (sortOrder) {
-                                SortOrder.DATE_CREATED_NEW -> notes.sortedByDescending { it.timestamp }
-                                SortOrder.DATE_CREATED_OLD -> notes.sortedBy { it.timestamp }
+                                SortOrder.DATE_CREATED_NEW -> notes.sortedByDescending { it.createdAt }
+                                SortOrder.DATE_CREATED_OLD -> notes.sortedBy { it.createdAt }
                                 SortOrder.TITLE_A_Z -> notes.sortedBy { it.title.lowercase() }
                                 SortOrder.TITLE_Z_A -> notes.sortedByDescending { it.title.lowercase() }
                             }

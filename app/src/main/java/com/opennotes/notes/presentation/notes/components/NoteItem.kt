@@ -43,17 +43,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.opennotes.R
 import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.presentation.addEditNote.components.markdown.MarkdownText
+import com.opennotes.util.contentColorForBackground
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteItem(
     note: Note,
+    markdownEnabled: Boolean = true,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     cornerRadius: Dp = 12.dp,
@@ -64,20 +67,13 @@ fun NoteItem(
 
     val textColor =
         remember(backgroundColor) {
-            if (
-                backgroundColor.contrastAgainst(Color.White) >=
-                backgroundColor.contrastAgainst(Color.Black)
-            ) {
-                Color.White
-            } else {
-                Color.Black
-            }
+            backgroundColor.contentColorForBackground()
         }
 
     val borderColor =
         remember(backgroundColor, isSelected) {
             if (isSelected) {
-                if (textColor == Color.White) Color.White else Color.Black
+                textColor
             } else {
                 if (textColor == Color.White) {
                     Color.White.copy(alpha = 0.2f)
@@ -122,7 +118,8 @@ fun NoteItem(
                         radius = cornerRadius.value.toInt(),
                         markdown = note.title,
                         isPreview = true,
-                        isEnabled = true,
+                        isEnabled = markdownEnabled,
+                        isReadOnly = true,
                         modifier = Modifier.fillMaxWidth(),
                         fontSize = 16.sp,
                         spacing = 1.dp,
@@ -135,7 +132,8 @@ fun NoteItem(
                         radius = cornerRadius.value.toInt(),
                         markdown = note.content,
                         isPreview = true,
-                        isEnabled = true,
+                        isEnabled = markdownEnabled,
+                        isReadOnly = true,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -149,7 +147,7 @@ fun NoteItem(
             if (isSelected) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = "Selected",
+                    contentDescription = stringResource(R.string.selected_desc),
                     tint = textColor,
                     modifier =
                         Modifier
@@ -161,10 +159,4 @@ fun NoteItem(
             }
         }
     }
-}
-
-private fun Color.contrastAgainst(other: Color): Float {
-    val l1 = luminance() + 0.05f
-    val l2 = other.luminance() + 0.05f
-    return if (l1 > l2) l1 / l2 else l2 / l1
 }

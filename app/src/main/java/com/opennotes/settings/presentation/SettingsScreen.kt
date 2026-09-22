@@ -18,49 +18,34 @@
 
 package com.opennotes.settings.presentation
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.res.stringResource
-import com.opennotes.R
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.opennotes.R
 import com.opennotes.notes.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -89,9 +74,9 @@ fun SettingsSwitch(
         colors =
             SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.primary,
-                uncheckedThumbColor = MaterialTheme.colorScheme.surface,
+                uncheckedThumbColor = MaterialTheme.colorScheme.outline,
                 checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             ),
     )
 }
@@ -111,13 +96,15 @@ fun SettingsScreen(
             context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
         }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    var showLanguagePicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 is SettingsViewModel.UiEvent.ShowSnackbar -> {
+                    val message = event.message ?: event.messageResId?.let { context.getString(it) } ?: ""
                     scope.launch {
-                        snackbarHostState.showSnackbar(message = event.message)
+                        snackbarHostState.showSnackbar(message = message)
                     }
                 }
 
@@ -197,8 +184,8 @@ fun SettingsScreen(
                 },
                 colors =
                     TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                        containerColor = Color.Transparent,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
                     ),
                 scrollBehavior = scrollBehavior,
             )
@@ -210,8 +197,14 @@ fun SettingsScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
+                    .consumeWindowInsets(paddingValues),
+            contentPadding =
+                PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = paddingValues.calculateTopPadding() + 16.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 16.dp,
+                ),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             item {
@@ -238,10 +231,32 @@ fun SettingsScreen(
 
             item {
                 SettingItem(
+                    title = stringResource(R.string.settings_behavior_title),
+                    subtitle = stringResource(R.string.settings_behavior_subtitle),
+                    icon = Icons.Default.Edit,
+                    onClick = { navController.navigate(Screen.BehaviorSettingsScreen.route) },
+                    isFirst = true,
+                    isLast = true,
+                )
+            }
+
+            item {
+                SettingItem(
                     title = stringResource(R.string.settings_privacy_title),
                     subtitle = stringResource(R.string.settings_privacy_subtitle),
                     icon = Icons.Default.Lock,
                     onClick = { navController.navigate(Screen.PrivacySettingsScreen.route) },
+                    isFirst = true,
+                    isLast = true,
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = stringResource(R.string.settings_language_title),
+                    subtitle = stringResource(R.string.settings_language_subtitle),
+                    icon = Icons.Default.Language,
+                    onClick = { showLanguagePicker = true },
                     isFirst = true,
                     isLast = true,
                 )
@@ -262,5 +277,15 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+    }
+
+    if (showLanguagePicker) {
+        LanguagePicker(
+            currentLanguageTag = AppCompatDelegate.getApplicationLocales().toLanguageTags(),
+            onLanguageSelected = { tag ->
+                viewModel.updateLanguage(tag)
+            },
+            onDismiss = { showLanguagePicker = false },
+        )
     }
 }

@@ -24,10 +24,13 @@ import kotlinx.serialization.Serializable
 data class Note(
     val title: String,
     val content: String,
-    val timestamp: Long,
+    val createdAt: Long,
+    val updatedAt: Long,
     val color: Int,
     val isPinned: Boolean = false,
     val reminderTime: Long? = null,
+    val repeatInterval: Long? = null,
+    val repeatUnit: String? = null,
     val id: Int? = null,
 )
 

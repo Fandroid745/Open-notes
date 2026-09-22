@@ -33,8 +33,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.opennotes.R
 import com.opennotes.notes.presentation.addEditNote.components.TransParentHintTextField
 
 @Composable
@@ -43,6 +45,7 @@ fun MarkdownField(
     contentTextFieldValue: TextFieldValue,
     contentColor: Color,
     isPreviewMode: Boolean,
+    markdownEnabled: Boolean,
     interactionSource: MutableInteractionSource,
     contentFocusRequester: FocusRequester,
     titleFocusRequester: FocusRequester,
@@ -61,9 +64,10 @@ fun MarkdownField(
         ) {
             MarkdownText(
                 radius = 8,
-                markdown = titleText.ifBlank { "No title" },
-                isPreview = true,
-                isEnabled = true,
+                markdown = titleText.ifBlank { stringResource(R.string.no_title_msg) },
+                isPreview = false,
+                isReadOnly = true,
+                isEnabled = markdownEnabled,
                 modifier = Modifier.fillMaxWidth(),
                 fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                 onContentChange = {},
@@ -73,9 +77,10 @@ fun MarkdownField(
             Spacer(modifier = Modifier.height(16.dp))
             MarkdownText(
                 radius = 8,
-                markdown = contentTextFieldValue.text.ifBlank { "No content to preview" },
+                markdown = contentTextFieldValue.text.ifBlank { stringResource(R.string.no_content_msg) },
                 isPreview = false,
-                isEnabled = true,
+                isReadOnly = true,
+                isEnabled = markdownEnabled,
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -91,7 +96,7 @@ fun MarkdownField(
         Column(modifier = modifier) {
             TransParentHintTextField(
                 text = titleText,
-                hint = "Title",
+                hint = stringResource(R.string.enter_title_hint),
                 onValueChange = onTitleChange,
                 onFocusChange = onTitleFocusChange,
                 singleLine = true,
@@ -112,7 +117,7 @@ fun MarkdownField(
             ) {
                 TransParentHintTextField(
                     textFieldValue = contentTextFieldValue,
-                    hint = "Content",
+                    hint = stringResource(R.string.enter_content_hint),
                     onValueChange = onContentChange,
                     onFocusChange = onContentFocusChange,
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = contentColor),

@@ -18,8 +18,6 @@
 
 package com.opennotes.notes.presentation.notes
 
-import com.opennotes.R
-import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -32,11 +30,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -44,14 +44,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.opennotes.R
 import com.opennotes.notes.domain.model.Note
 import com.opennotes.notes.presentation.notes.components.NoteItem
 import com.opennotes.notes.presentation.util.Screen
+import com.opennotes.settings.domain.model.NotesLayout
+import com.opennotes.settings.presentation.SettingsViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,8 +65,11 @@ import kotlinx.coroutines.launch
 fun NotesScreen(
     navController: NavController,
     viewModel: NotesViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.value
+    val context = LocalContext.current
+    val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
     val haptic = LocalHapticFeedback.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -76,7 +85,7 @@ fun NotesScreen(
             onDismissRequest = { notesPendingDeleteState.value = null },
             title = {
                 Text(
-                    text = if (notesToDelete.size == 1) "Delete note" else "Delete ${notesToDelete.size} notes",
+                    text = if (notesToDelete.size == 1) stringResource(R.string.delete_note_title) else stringResource(R.string.delete_notes_title, notesToDelete.size),
                     fontWeight = FontWeight.SemiBold,
                 )
             },
@@ -84,9 +93,9 @@ fun NotesScreen(
                 Text(
                     text =
                         if (notesToDelete.size == 1) {
-                            "Are you sure you want to delete this note?"
+                            stringResource(R.string.delete_note_confirm)
                         } else {
-                            "Are you sure you want to delete these notes?"
+                            stringResource(R.string.delete_notes_confirm)
                         },
                 )
             },
@@ -98,8 +107,8 @@ fun NotesScreen(
                         scope.launch {
                             val result =
                                 snackbarHostState.showSnackbar(
-                                    message = if (notesToDelete.size == 1) "Note deleted" else "${notesToDelete.size} notes deleted",
-                                    actionLabel = "Undo",
+                                    message = if (notesToDelete.size == 1) context.getString(R.string.note_deleted_msg) else context.getString(R.string.notes_deleted_msg, notesToDelete.size),
+                                    actionLabel = context.getString(R.string.undo_label),
                                     duration = SnackbarDuration.Short,
                                 )
                             if (result == SnackbarResult.ActionPerformed) {
@@ -132,7 +141,7 @@ fun NotesScreen(
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "New note",
+                        contentDescription = stringResource(R.string.new_note_desc),
                     )
                 },
                 text = {
@@ -150,13 +159,17 @@ fun NotesScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(top = 12.dp),
+                        .consumeWindowInsets(paddingValues)
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+                        ),
             ) {
                 Column(
                     modifier =
                         Modifier
                             .fillMaxWidth()
+                            .padding(top = paddingValues.calculateTopPadding())
+                            .padding(top = 12.dp)
                             .padding(horizontal = 16.dp),
                 ) {
                     if (state.selectedNotes.isNotEmpty()) {
@@ -171,7 +184,7 @@ fun NotesScreen(
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 viewModel.onEvent(NotesEvent.ClearSelection)
                             }) {
-                                Icon(Icons.Default.Close, "Clear selection")
+                                Icon(Icons.Default.Close, stringResource(R.string.clear_selection_desc))
                             }
                             Text(
                                 text = "${state.selectedNotes.size}",
@@ -184,7 +197,7 @@ fun NotesScreen(
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.SelectAll,
-                                    contentDescription = "Select all",
+                                    contentDescription = stringResource(R.string.select_all_desc),
                                 )
                             }
                             val allPinned = state.selectedNotes.all { it.isPinned }
@@ -194,14 +207,14 @@ fun NotesScreen(
                             }) {
                                 Icon(
                                     imageVector = if (allPinned) Icons.Outlined.PushPin else Icons.Filled.PushPin,
-                                    contentDescription = "Toggle Pin",
+                                    contentDescription = stringResource(R.string.toggle_pin_desc),
                                 )
                             }
                             IconButton(onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 notesPendingDeleteState.value = state.selectedNotes
                             }) {
-                                Icon(Icons.Default.Delete, "Delete selected")
+                                Icon(Icons.Default.Delete, stringResource(R.string.delete_selected_desc))
                             }
                         }
                     } else {
@@ -224,17 +237,37 @@ fun NotesScreen(
                             },
                             trailingIcon = {
                                 Row {
+                                    IconButton(onClick = {
+                                        val newLayout =
+                                            if (settings.notesLayout == NotesLayout.GRID) {
+                                                NotesLayout.COLUMN
+                                            } else {
+                                                NotesLayout.GRID
+                                            }
+                                        settingsViewModel.updateNotesLayout(newLayout)
+                                    }) {
+                                        Icon(
+                                            imageVector =
+                                                if (settings.notesLayout == NotesLayout.GRID) {
+                                                    Icons.Default.ViewAgenda
+                                                } else {
+                                                    Icons.Default.GridView
+                                                },
+                                            contentDescription = stringResource(R.string.notes_layout_toggle),
+                                            modifier = Modifier.size(25.dp),
+                                        )
+                                    }
                                     IconButton(onClick = { showSortSheet = true }) {
                                         Icon(
                                             imageVector = Icons.Default.SwapVert,
-                                            contentDescription = "Sort notes",
+                                            contentDescription = stringResource(R.string.sort_notes_desc),
                                             modifier = Modifier.size(25.dp),
                                         )
                                     }
                                     IconButton(onClick = { navController.navigate(Screen.SettingsScreen.route) }) {
                                         Icon(
                                             imageVector = Icons.Default.Settings,
-                                            contentDescription = "Settings",
+                                            contentDescription = stringResource(R.string.settings_desc),
                                             modifier = Modifier.size(25.dp),
                                         )
                                     }
@@ -266,16 +299,21 @@ fun NotesScreen(
                 val otherNotes = state.notes.filter { !it.isPinned }
 
                 LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(2),
+                    columns = StaggeredGridCells.Fixed(if (settings.notesLayout == NotesLayout.GRID) 2 else 1),
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    contentPadding =
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = paddingValues.calculateBottomPadding() + 80.dp,
+                        ),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalItemSpacing = 8.dp,
                 ) {
                     if (pinnedNotes.isNotEmpty()) {
                         item(span = StaggeredGridItemSpan.FullLine) {
                             Text(
-                                text = "PINNED",
+                                text = stringResource(R.string.pinned_header),
                                 style = MaterialTheme.typography.labelMedium,
                                 modifier = Modifier.padding(bottom = 8.dp, start = 8.dp),
                             )
@@ -286,6 +324,7 @@ fun NotesScreen(
                         ) { note ->
                             NoteItem(
                                 note = note,
+                                markdownEnabled = settings.markdownEnabled,
                                 isSelected = state.selectedNotes.contains(note),
                                 modifier = Modifier.fillMaxWidth(),
                                 onNoteClick = {
@@ -311,7 +350,7 @@ fun NotesScreen(
                         if (pinnedNotes.isNotEmpty()) {
                             item(span = StaggeredGridItemSpan.FullLine) {
                                 Text(
-                                    text = "OTHERS",
+                                    text = stringResource(R.string.others_header),
                                     style = MaterialTheme.typography.labelMedium,
                                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, start = 8.dp),
                                 )
@@ -323,6 +362,7 @@ fun NotesScreen(
                         ) { note ->
                             NoteItem(
                                 note = note,
+                                markdownEnabled = settings.markdownEnabled,
                                 isSelected = state.selectedNotes.contains(note),
                                 modifier = Modifier.fillMaxWidth(),
                                 onNoteClick = {

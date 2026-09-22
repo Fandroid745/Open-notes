@@ -17,7 +17,6 @@ package com.opennotes.settings.presentation
  *
  */
 
-import com.opennotes.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.opennotes.R
 import com.opennotes.settings.domain.model.ThemeMode
 
 @Composable

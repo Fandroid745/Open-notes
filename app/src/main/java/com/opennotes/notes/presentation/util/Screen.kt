@@ -31,6 +31,8 @@ sealed class Screen(
 
     object AppearanceSettingsScreen : Screen("appearance_screen")
 
+    object BehaviorSettingsScreen : Screen("behavior_screen")
+
     object PrivacySettingsScreen : Screen("privacy_screen")
 
     object BackupScreen : Screen("backup_screen")
