@@ -62,5 +62,18 @@ Help translate Open Notes into your language on [Weblate](https://hosted.weblate
 ## Inspiration
 
 - [EasyNotes](https://github.com/Kin69/EasyNotes?tab=readme-ov-file)
-
+- [Tomato](https://github.com/nsh07/Tomato)
 ---
+
+# Security
+
+SHA-256 fingerprint for the signing certificate used for GitHub releases:
+```text
+73:C5:1F:64:F5:96:9F:1F:E9:CB:AF:4E:DE:A2:14:9B:DD:5B:19:C9:38:50:0D:C2:34:A3:B0:CB:20:29:51:DC
+```
+
+SHA-1:
+```text
+06:E6:FE:D1:CB:F6:22:94:98:42:E8:6A:6A:2B:0E:1D:3A:3C:71:FA
+```
+
