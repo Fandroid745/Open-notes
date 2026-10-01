@@ -55,14 +55,13 @@ abstract class NoteDatabase : RoomDatabase() {
                 }
             }
 
-        val MIGRATION_5_6 =
-            object : Migration(5, 6) {
-                override fun migrate(db: SupportSQLiteDatabase) {
-                    // Split timestamp into createdAt and updatedAt
-                    db.execSQL("ALTER TABLE Note ADD COLUMN updatedAt INTEGER NOT NULL DEFAULT 0")
-                    db.execSQL("ALTER TABLE Note RENAME COLUMN timestamp TO createdAt")
-                    db.execSQL("UPDATE Note SET updatedAt = createdAt")
-                }
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE `Note_new` (`title` TEXT NOT NULL, `content` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `color` INTEGER NOT NULL, `isPinned` INTEGER NOT NULL, `reminderTime` INTEGER, `repeatInterval` INTEGER, `repeatUnit` TEXT, `id` INTEGER, PRIMARY KEY(`id`))")
+                db.execSQL("INSERT INTO `Note_new` (title, content, createdAt, updatedAt, color, isPinned, reminderTime, repeatInterval, repeatUnit, id) SELECT title, content, timestamp, timestamp, color, isPinned, reminderTime, repeatInterval, repeatUnit, id FROM `Note`")
+                db.execSQL("DROP TABLE `Note`")
+                db.execSQL("ALTER TABLE `Note_new` RENAME TO `Note`")
             }
+        }
     }
 }
