@@ -394,20 +394,21 @@ fun RenderMarkdownElement(
                 checked = element.checked,
                 textColor = textColor,
                 onCheckedChange =
-                    if (isPreview || isReadOnly) {
+                    if (isPreview) {
                         null
                     } else {
                         { newChecked ->
-                            val newMarkdown =
-                                lines.toMutableList().apply {
-                                    this[element.index] =
-                                        if (newChecked) {
-                                            "[X] ${element.text}"
-                                        } else {
-                                            "[ ] ${element.text}"
-                                        }
-                                }
-                            onContentChange(newMarkdown.joinToString("\n"))
+                            val updatedLines = lines.toMutableList()
+                            val original = updatedLines[element.index]
+                            val match = Regex("^([\\-*]\\s*)?\\[[ xX]]").find(original)
+                            if (match != null) {
+                                updatedLines[element.index] =
+                                    original.replaceRange(
+                                        match.range,
+                                        match.groupValues[1] + if (newChecked) "[x]" else "[ ]",
+                                    )
+                                onContentChange(updatedLines.joinToString("\n"))
+                            }
                         }
                     },
             )
