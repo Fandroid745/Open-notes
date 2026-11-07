@@ -1,0 +1,197 @@
+<resources>
+
+    <!-- General / App Identity -->
+    <string name="app_name">Open Notes</string>
+    <string name="new_note">Nowa notatka</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Anuluj</string>
+    <string name="delete">Usuń</string>
+    <string name="remove">Usuń</string>
+    <string name="change">Zmień</string>
+    <string name="save">Zapisz</string>
+    <string name="switch_on">Wł.</string>
+    <string name="switch_off">Wył.</string>
+
+    <!-- Authentication & Privacy -->
+    <string name="unlock_title">Odblokuj OpenNotes</string>
+    <string name="unlock_subtitle">Potwierdź swoją tożsamość, aby uzyskać dostęp do notatek</string>
+    <string name="biometric_enable_title">Włącz blokadę biometryczną</string>
+    <string name="biometric_disable_title">Wyłącz blokadę biometryczną</string>
+    <string name="biometric_enable_subtitle">Potwierdź swoją tożsamość, aby włączyć blokadę aplikacji</string>
+    <string name="biometric_disable_subtitle">Potwierdź swoją tożsamość, aby wyłączyć blokadę aplikacji</string>
+    <string name="privacy_title">Prywatność i bezpieczeństwo</string>
+    <string name="biometric_lock_title">Blokada biometryczna</string>
+    <string name="biometric_lock_subtitle_enabled">Gdy funkcja jest włączona, wymagany jest odcisk palca</string>
+    <string name="biometric_lock_subtitle_disabled">Wymagaj odcisku palca do odblokowania aplikacji</string>
+    <string name="secure_screen_title">Bezpieczny ekran</string>
+    <string name="secure_screen_subtitle">Ukrywaj zawartość na liście ostatnich aplikacji i blokuj zrzuty ekranu</string>
+    <string name="biometric_lock_enabled">Blokada biometryczna została włączona</string>
+    <string name="biometric_lock_disabled">Blokada biometryczna została wyłączona</string>
+    <string name="biometric_auth_failed">Uwierzytelnianie biometryczne zostało anulowane lub nie powiodło się</string>
+
+    <!-- Notes List -->
+    <string name="sort_by">Sortuj według</string>
+    <string name="sort_newest_first">Od najnowszych</string>
+    <string name="sort_oldest_first">Od najstarszych</string>
+    <string name="sort_title_az">Tytuł A–Z</string>
+    <string name="sort_title_za">Tytuł Z–A</string>
+    <string name="search_notes">Szukaj notatek</string>
+    <string name="notes_layout_toggle">Zmień układ</string>
+    <string name="pinned_header">PRZYPIĘTE</string>
+    <string name="others_header">INNE</string>
+    <string name="undo_label">Cofnij</string>
+    <string name="note_deleted_msg">Notatka została usunięta</string>
+    <string name="notes_deleted_msg">Usunięto notatki: %1$d</string>
+    <string name="delete_note_title">Usuń notatkę</string>
+    <string name="delete_notes_title">Usuń notatki: %1$d</string>
+    <string name="delete_note_confirm">Czy na pewno chcesz usunąć tę notatkę?</string>
+    <string name="delete_notes_confirm">Czy na pewno chcesz usunąć te notatki?</string>
+
+    <!-- Note Editor -->
+    <string name="note_info">Informacje o notatce</string>
+    <string name="share_note">Udostępnij notatkę</string>
+    <string name="enter_title_hint">Wprowadź tytuł....</string>
+    <string name="enter_content_hint">Wprowadź treść....</string>
+    <string name="title_label">Tytuł</string>
+    <string name="content_label">Treść</string>
+    <string name="no_title_msg">Brak tytułu</string>
+    <string name="no_content_msg">Brak treści do podglądu</string>
+    <string name="not_saved_yet">Jeszcze niezapisano</string>
+    <string name="created_label">Utworzono: %1$s</string>
+    <string name="words_label">Słowa: %1$s</string>
+    <string name="characters_label">Znaki: %1$s</string>
+
+    <!-- Reminders & Dates -->
+    <string name="select_time">Wybierz godzinę</string>
+    <string name="custom_repeat_title">Własne powtarzanie</string>
+    <string name="interval_label">Częstotliwość</string>
+    <string name="note_reminder_dialog_title">Przypomnienie o notatce</string>
+    <string name="reminder_set_for_label">Przypomnienie ustawione na:\n%1$s</string>
+    <string name="repeat_label_prefix">Powtarzanie: %1$s</string>
+    <string name="pick_date_time_title">Wybierz datę i godzinę</string>
+    <string name="reminder_notification_title">Przypomnienie</string>
+    <string name="reminder_notification_content">Otwórz notatkę, aby zobaczyć szczegóły</string>
+    <string name="urgent_reminders_desc">Pilne przypomnienia o notatkach</string>
+    <string name="reminder_set_successfully">Przypomnienie zostało ustawione</string>
+    <string name="reminder_removed">Przypomnienie zostało usunięte</string>
+    <string name="repeat_does_not_repeat">Nie powtarzaj</string>
+    <string name="repeat_daily">Codziennie</string>
+    <string name="repeat_weekly">Co tydzień</string>
+    <string name="repeat_monthly">Co miesiąc</string>
+    <string name="repeat_custom">Własne...</string>
+    <string name="unit_minutes">minut</string>
+    <string name="unit_hours">godzin</string>
+    <string name="unit_days">dni</string>
+    <string name="unit_weeks">tygodni</string>
+    <string name="unit_months">miesięcy</string>
+    <string name="unit_years">lat</string>
+    <string name="every">Co</string>
+
+    <!-- Settings -->
+    <string name="app_icon_change_title">Zmienić ikonę aplikacji?</string>
+    <string name="app_icon_change_message">Zmiana ikony wymaga ponownego uruchomienia aplikacji. Twój ekran główny może się na chwilę odświeżyć. Czy chcesz kontynuować?</string>
+    <string name="app_icon_restart">Uruchom ponownie</string>
+    <string name="app_icon_cancel">Anuluj</string>
+    <string name="settings_title">Ustawienia</string>
+    <string name="settings_backup_restore_title">Kopia zapasowa i przywracanie</string>
+    <string name="settings_backup_restore_subtitle">Eksportuj i importuj swoje notatki</string>
+    <string name="settings_appearance_title">Wygląd</string>
+    <string name="settings_appearance_subtitle">Motyw, schemat kolorów, czarny motyw</string>
+    <string name="settings_behavior_title">Zachowanie</string>
+    <string name="settings_behavior_subtitle">Tryb czytania, tryb Markdown</string>
+    <string name="settings_privacy_title">Prywatność</string>
+    <string name="settings_privacy_subtitle">Blokada biometryczna, bezpieczny ekran</string>
+    <string name="settings_about_title">O aplikacji</string>
+    <string name="settings_about_subtitle">Wersja %1$s</string>
+    <string name="appearance_title">Wygląd</string>
+    <string name="behavior_title">Zachowanie</string>
+    <string name="open_in_reading_mode_title">Tryb czytania</string>
+    <string name="open_in_reading_mode_subtitle">Otwieraj notatki w widoku ułatwiającym kopiowanie</string>
+    <string name="markdown_enabled_title">Tryb Markdown</string>
+    <string name="markdown_enabled_subtitle">Pokazuj formatowanie Markdown w notatkach</string>
+    <string name="dynamic_color_title">Dynamiczne kolory</string>
+    <string name="dynamic_color_subtitle">Dostosuj kolory motywu do tapety</string>
+    <string name="black_theme_title">Czarny motyw</string>
+    <string name="black_theme_subtitle_enabled">Używaj głębokiej czerni w ciemnym motywie</string>
+    <string name="black_theme_subtitle_disabled">Używaj standardowych ciemnych kolorów</string>
+    <string name="backup_restore_title">Kopia zapasowa i przywracanie</string>
+    <string name="export_notes_title">Eksportuj notatki</string>
+    <string name="export_notes_subtitle">Zapisz swoje notatki w archiwum ZIP</string>
+    <string name="import_notes_title">Importuj notatki</string>
+    <string name="import_notes_subtitle">Wczytaj notatki z kopii zapasowej JSON lub ZIP</string>
+    <string name="notes_exported_msg">Pomyślnie wyeksportowano notatki</string>
+    <string name="notes_imported_msg">Zaimportowano notatki</string>
+    <string name="about_title">O aplikacji</string>
+    <string name="color_scheme_title">Schemat kolorów</string>
+    <string name="dynamic_label">Dynamiczny</string>
+    <string name="color_label">Kolor</string>
+    <string name="theme_title">Motyw</string>
+    <string name="app_icon_color_title">Kolor ikony aplikacji</string>
+    <string name="theme_system">Domyślny systemu</string>
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="custom_color">Własny</string>
+    <string name="enter_hex_code">Wprowadź kod HEX (np. #FF5733)</string>
+    <string name="hex_placeholder">RRGGBB</string>
+    <string name="settings_language_title">Język</string>
+    <string name="settings_language_subtitle">Zmień język aplikacji</string>
+    <string name="language_default">Domyślny systemu</string>
+    <string name="language_en">Angielski</string>
+    <string name="language_es">Hiszpański</string>
+    <string name="language_fr">Francuski</string>
+    <string name="language_pl">Polski</string>
+
+    <!-- Widgets -->
+    <string name="widget_tap_to_select">Dotknij, aby wybrać notatkę</string>
+    <string name="widget_select_a_note">Wybierz notatkę</string>
+    <string name="widget_no_notes_found">Nie znaleziono notatek</string>
+    <string name="widget_no_content">Brak treści</string>
+    <string name="add_note_label">Dodaj notatkę</string>
+
+
+    <!-- Support & License -->
+    <string name="support_github_sponsors">Wesprzyj mnie przez GitHub Sponsors</string>
+    <string name="support_github_description">Miesięczne lub jednorazowe bezpośrednie wsparcie rozwoju aplikacji</string>
+    <string name="help_translate">Pomóż w tłumaczeniu</string>
+    <string name="help_translate_description">Przetłumacz Open Notes na swój język</string>
+    <string name="license_label">Licencja</string>
+    <string name="license_gpl">Licencja GPL-3.0</string>
+
+    <!-- Error Messages -->
+    <string name="error_file_is_empty">Plik jest pusty</string>
+    <string name="error_invalid_json">Nieprawidłowy format JSON</string>
+    <string name="error_no_notes_found">Nie znaleziono notatek w pliku</string>
+    <string name="error_no_valid_notes">Nie znaleziono prawidłowych notatek</string>
+    <string name="error_invalid_note">Wymagane jest podanie tytułu lub treści</string>
+    <string name="error_biometric_unavailable">Uwierzytelnianie biometryczne jest niedostępne</string>
+    <string name="invalid_hex_code">Nieprawidłowy kod HEX</string>
+    <string name="error_save_note">Nie udało się zapisać notatki</string>
+    <string name="error_insert_image">Nie udało się wstawić obrazu</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="back_desc">Wstecz</string>
+    <string name="go_back_desc">Wróć</string>
+    <string name="reading_mode_desc">Tryb czytania</string>
+    <string name="editing_mode_desc">Tryb edycji</string>
+    <string name="expand_desc">Rozwiń</string>
+    <string name="selected_desc">Zaznaczone</string>
+    <string name="dropdown_desc">Menu rozwijane</string>
+    <string name="new_note_desc">Nowa notatka</string>
+    <string name="select_all_desc">Zaznacz wszystko</string>
+    <string name="toggle_pin_desc">Przypnij lub odepnij</string>
+    <string name="sort_notes_desc">Sortuj notatki</string>
+    <string name="settings_desc">Ustawienia</string>
+    <string name="set_reminder_desc">Ustaw przypomnienie</string>
+    <string name="change_color_desc">Zmień kolor</string>
+    <string name="add_image_desc">Dodaj obraz</string>
+    <string name="format_text_desc">Formatuj tekst</string>
+    <string name="more_options_desc">Więcej opcji</string>
+    <string name="note_image_desc">Obraz w notatce</string>
+    <string name="clear_selection_desc">Wyczyść zaznaczenie</string>
+    <string name="delete_selected_desc">Usuń zaznaczone</string>
+    <string name="keyboard_mode_desc">Przełącz na klawiaturę</string>
+    <string name="clock_mode_desc">Przełącz na zegar</string>
+    <string name="navigate_desc">Nawigacja</string>
+    <string name="github_content_desc">GitHub</string>
+
+</resources>
